@@ -5,7 +5,8 @@ python-dotenv
 google-generativeai
 africastalking
 Flask
-python=3.13.3
+python==3.13.3
+
 
 
 
