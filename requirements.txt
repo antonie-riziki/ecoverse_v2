@@ -6,7 +6,8 @@ google-generativeai
 africastalking
 Flask
 google-genai
-opik
+#opik
+
 
 
 
