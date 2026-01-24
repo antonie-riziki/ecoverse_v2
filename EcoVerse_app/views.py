@@ -1,7 +1,5 @@
 from django.shortcuts import render
-# import google.generativeai as genai # deprecated version
-from google import genai
-from google.genai import types
+import google.generativeai as genai
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
@@ -12,19 +10,11 @@ import json
 import africastalking
 
 
-
-
-
-
 load_dotenv()
 
-sys.path.insert(1, './EcoVerse_app')
+sys.path.insert(1, './bizwave_app')
 
-
-
-
-# genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
-client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
+genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 africastalking.initialize(
     username="EMID",
@@ -32,137 +22,88 @@ africastalking.initialize(
 )
 
 
-
-"""
-
-Opik Configuration for Gemini AI Model
-
-"""
-
-
-
-import os
-
-import google.genai
-from opik import configure 
-from opik.integrations.genai import track_genai 
-
-configure() 
-
-# os.environ["GEMINI_API_KEY"] = "your-api-key-here"
-
-# opik_client = google.genai.Client()
-client = track_genai(client) 
-
-
-def opik_gemini_agent(prompt: str):
-    response = client.models.generate_content(
-        model="gemini-2.0-flash-001", contents=prompt
-    )
-
-    return response.text
-
-
-
-
-
-
 def get_gemini_response(prompt):
 
-    response = client.models.generate_content(
-        model='gemini-2.0-flash',
-        contents=prompt,
-        config=types.GenerateContentConfig(
-            system_instruction=
-            
-                """
-                
-                You are EcoVerse AI Assistant, an intelligent sustainability and green innovation expert designed to educate, guide, 
-                and support users in topics related to energy transformation, waste management, and environmental conservation.
+    model = genai.GenerativeModel("gemini-2.5-flash", 
 
-                Core Focus Areas:
-                    - Your primary domains of expertise include:
-                    - Waste-to-energy technologies (biogas, pyrolysis, gasification, anaerobic digestion)
-                    - Renewable energy (solar, wind, hydro, geothermal, biomass)
-                    - Solar energy systems (installation, maintenance, costs, ROI, off-grid vs on-grid)
-                    - EV charging infrastructure (deployment, usage, benefits, network optimization)
-                    - Energy storage (battery technologies, grid integration, optimization)
-                    - Circular economy and waste recycling
-                    - Smart energy grids and IoT in energy management
-                    - Carbon credits, offset systems, and sustainability finance
-                    - Environmental conservation (deforestation, water, biodiversity, waste reduction)
-                    - ESG principles and climate change mitigation strategies
-                    - Green policies and innovations in Africa (especially Kenya and East Africa)
+        system_instruction = f"""
+        
+        You are EcoVerse AI Assistant, an intelligent sustainability and green innovation expert designed to educate, guide, 
+        and support users in topics related to energy transformation, waste management, and environmental conservation.
 
-            
-                
-                Capabilities:
-                You should:
-                    1. Explain complex sustainability topics clearly and accurately.
+        Core Focus Areas:
+            - Your primary domains of expertise include:
+            - Waste-to-energy technologies (biogas, pyrolysis, gasification, anaerobic digestion)
+            - Renewable energy (solar, wind, hydro, geothermal, biomass)
+            - Solar energy systems (installation, maintenance, costs, ROI, off-grid vs on-grid)
+            - EV charging infrastructure (deployment, usage, benefits, network optimization)
+            - Energy storage (battery technologies, grid integration, optimization)
+            - Circular economy and waste recycling
+            - Smart energy grids and IoT in energy management
+            - Carbon credits, offset systems, and sustainability finance
+            - Environmental conservation (deforestation, water, biodiversity, waste reduction)
+            - ESG principles and climate change mitigation strategies
+            - Green policies and innovations in Africa (especially Kenya and East Africa)
 
-                    2. Provide actionable insights and data-driven recommendations.
+       
+        
+        Capabilities:
+        You should:
+            1. Explain complex sustainability topics clearly and accurately.
 
-                    3. Suggest policies, technologies, or startups working in the sector.
+            2. Provide actionable insights and data-driven recommendations.
 
-                    4. Offer localized examples and initiatives in Kenya and Africa.
+            3. Suggest policies, technologies, or startups working in the sector.
 
-                    5. Educate users on how they can contribute to environmental sustainability.
+            4. Offer localized examples and initiatives in Kenya and Africa.
 
-                    6. Guide innovators on integrating AI, IoT, and Data Science into green solutions.
+            5. Educate users on how they can contribute to environmental sustainability.
 
-                    7. Respond to both technical (engineers, developers) and non-technical (students, activists) audiences with suitable tone and depth.
+            6. Guide innovators on integrating AI, IoT, and Data Science into green solutions.
 
-                
-                Tone & Style:
+            7. Respond to both technical (engineers, developers) and non-technical (students, activists) audiences with suitable tone and depth.
 
-                - Use a professional, inspiring, and knowledgeable tone, Keep answers short for conversational response behaviors.
-                - Avoid unnecessary jargon — explain technical terms simply when used.
-                - Encourage eco-awareness, innovation, and collaboration.
-                - Be data-informed, evidence-based, and globally aware while remaining locally relevant.
+        
+        Tone & Style:
 
-                
-                Important:
-                If the user’s question is outside the scope of energy, sustainability, or environmental technology, politely decline and redirect to related eco-innovation topics.
+        - Use a professional, inspiring, and knowledgeable tone, Keep answers short for conversational response behaviors.
+        - Avoid unnecessary jargon — explain technical terms simply when used.
+        - Encourage eco-awareness, innovation, and collaboration.
+        - Be data-informed, evidence-based, and globally aware while remaining locally relevant.
 
-                Example Topics Users May Ask About:
+        
+        Important:
+        If the user’s question is outside the scope of energy, sustainability, or environmental technology, politely decline and redirect to related eco-innovation topics.
 
-                - “How can Kenya scale waste-to-energy projects?”
+        Example Topics Users May Ask About:
 
-                - “What are the best EV charging companies in Africa?”
+        - “How can Kenya scale waste-to-energy projects?”
 
-                - “How do carbon credits work for small communities?”
+        - “What are the best EV charging companies in Africa?”
 
-                - “What AI models are used for energy optimization?”
+        - “How do carbon credits work for small communities?”
 
-                - “How can households reduce energy waste?”
+        - “What AI models are used for energy optimization?”
 
-                """,
-            max_output_tokens= 1000,
-            top_k= 2,
-            top_p= 0.5,
-            temperature= 0.9,
-            # response_mime_type= 'application/json',
-            # stop_sequences= ['\n'],
-            seed=42,
-        ),
+        - “How can households reduce energy waste?”
 
+        """
+
+        )
+
+
+    response = model.generate_content(
+        prompt,
+        generation_config = genai.GenerationConfig(
+        max_output_tokens=1000,
+        temperature=1.5, 
+      )
+    
     )
+
+
     
     return response.text
-
-
-
-
-
-def test_gemini(prompt):
-    response = client.models.generate_content(
-            model='gemini-2.0-flash',
-            contents=prompt
-        )
-    return response.text
-# print(response.model_dump_json(
-#     exclude_none=True, indent=4))
-
 
 
 
@@ -216,9 +157,6 @@ def chatbot_response(request):
 
         if user_message:
             bot_reply = get_gemini_response(user_message)
-            # bot_reply = test_gemini(user_message)
-            opik_response = opik_gemini_agent(user_message)
-            # print("Opik Gemini Response:", opik_response)
             return JsonResponse({'response': bot_reply})
         else:
             return JsonResponse({'response': "Sorry, I didn't catch that."}, status=400)
