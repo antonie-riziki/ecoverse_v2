@@ -14,8 +14,7 @@ import africastalking
 
 
 
-from opik import configure 
-from opik.integrations.genai import track_genai 
+
 
 configure() 
 
@@ -29,6 +28,8 @@ sys.path.insert(1, './EcoVerse_app')
 
 
 if os.getenv("ENABLE_OPIK") == "true":
+    from opik import configure 
+    from opik.integrations.genai import track_genai 
     import opik
     opik.init()
 
