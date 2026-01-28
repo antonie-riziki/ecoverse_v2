@@ -13,7 +13,8 @@ import africastalking
 
 
 
-
+from opik import configure 
+from opik.integrations.genai import track_genai 
 
 
 configure() 
@@ -24,14 +25,6 @@ load_dotenv()
 
 sys.path.insert(1, './EcoVerse_app')
 
-
-
-
-if os.getenv("ENABLE_OPIK") == "true":
-    from opik import configure 
-    from opik.integrations.genai import track_genai 
-    import opik
-    opik.init()
 
 
 # genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))

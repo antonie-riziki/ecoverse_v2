@@ -143,11 +143,3 @@ REST_FRAMEWORK = {
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-
-ENABLE_OPIK = os.getenv("ENABLE_OPIK", "false").lower() == "true"
-
-
-if settings.ENABLE_OPIK:
-    from opik import Agent
-
-
