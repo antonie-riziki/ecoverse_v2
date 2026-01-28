@@ -199,7 +199,7 @@ def chatbot_response(request):
         user_message = data.get('message', '')
 
         if user_message:
-            # bot_reply = get_gemini_response(user_message)
+            bot_reply = get_gemini_response(user_message)
             opik_response = opik_gemini_agent(user_message)
             # print("Opik Gemini Response:", opik_response)
             return JsonResponse({'response': opik_response})
