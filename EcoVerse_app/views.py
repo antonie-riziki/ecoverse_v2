@@ -13,11 +13,11 @@ import africastalking
 
 
 
-from opik import configure 
-from opik.integrations.genai import track_genai 
+# from opik import configure 
+# from opik.integrations.genai import track_genai 
 
 
-configure() 
+# configure() 
 
 
 
@@ -46,15 +46,49 @@ Opik Configuration for Gemini AI Model
 # os.environ["GEMINI_API_KEY"] = "your-api-key-here"
 
 # opik_client = google.genai.Client()
-client = track_genai(client) 
+
+
+# client = track_genai(client) 
+
+
+# def opik_gemini_agent(prompt: str):
+#     response = client.models.generate_content(
+#         model="gemini-2.0-flash-001", contents=prompt
+#     )
+
+#     return response.text
+
+
+
+def get_opik_client(base_client):
+    """
+    Safely wraps the Gemini client with Opik if available.
+    Never crashes the app.
+    """
+    try:
+        from opik import configure
+        from opik.integrations.genai import track_genai
+
+        configure()
+        return track_genai(base_client)
+
+    except Exception as e:
+        # Log locally, but never crash prod
+        print("Opik disabled:", str(e))
+        return base_client
+    
 
 
 def opik_gemini_agent(prompt: str):
-    response = client.models.generate_content(
-        model="gemini-2.0-flash-001", contents=prompt
+    safe_client = get_opik_client(client)
+
+    response = safe_client.models.generate_content(
+        model="gemini-2.0-flash-001",
+        contents=prompt
     )
 
     return response.text
+
 
 
 
