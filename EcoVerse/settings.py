@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 
+from django.conf import settings
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -139,3 +141,13 @@ REST_FRAMEWORK = {
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+ENABLE_OPIK = os.getenv("ENABLE_OPIK", "false").lower() == "true"
+
+
+if settings.ENABLE_OPIK:
+    from opik import Agent
+
+
