@@ -226,7 +226,7 @@ def community(request):
     return render(request, 'community.html')
 
 
-def ai_assistatnt(request):
+def ai_assistant(request):
     return render(request, 'ai_assist.html')
 
 
