@@ -3,17 +3,18 @@
 <html>
 <head>
   <title>EcoVerse AI Assistant</title>
-  <link rel="stylesheet" href="{% static 'css/ai_assistant.css' %}">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="EcoVerse AI Assistant: Get insights on waste, energy, and sustainability." />
+  <link rel="canonical" href="./ai_assist.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <style>
-
-
-body {
-  margin: 0;
-  font-family: Inter, sans-serif;
-  background: #f6f8fa;
-}
 
 .ai-container {
   display: flex;
@@ -111,7 +112,7 @@ body {
 
 <body>
 
-    
+
 {% include 'sidebar.html' %}
 
 <div class="ai-container">
