@@ -226,6 +226,10 @@ def community(request):
     return render(request, 'community.html')
 
 
+def ai_assistatnt(request):
+    return render(request, 'ai_assist.html')
+
+
 
 @csrf_exempt
 def chatbot_response(request):

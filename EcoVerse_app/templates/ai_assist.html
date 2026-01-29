@@ -1,0 +1,194 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>EcoVerse AI Assistant</title>
+  <link rel="stylesheet" href="{% static 'css/ai_assistant.css' %}">
+</head>
+
+<style>
+
+
+body {
+  margin: 0;
+  font-family: Inter, sans-serif;
+  background: #f6f8fa;
+}
+
+.ai-container {
+  display: flex;
+  height: 100vh;
+}
+
+/* Chat pane */
+.chat-pane {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+}
+
+.chat-messages {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.message {
+  max-width: 70%;
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.user {
+  background: #dcfce7;
+  align-self: flex-end;
+}
+
+.bot {
+  background: #f1f5f9;
+  align-self: flex-start;
+}
+
+/* Input */
+.chat-input {
+  display: flex;
+  padding: 12px;
+  border-top: 1px solid #e5e7eb;
+  gap: 8px;
+}
+
+.chat-input input[type="text"] {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+}
+
+.chat-input button {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  background: #16a34a;
+  color: white;
+  cursor: pointer;
+}
+
+.attach-btn {
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* History */
+.history-pane {
+  flex: 1;
+  background: #f9fafb;
+  padding: 16px;
+}
+
+.history-pane h4 {
+  margin-bottom: 12px;
+}
+
+.history-item {
+  padding: 10px;
+  border-radius: 8px;
+  background: #ffffff;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.history-item.active {
+  background: #dcfce7;
+}
+
+
+</style>
+
+
+<body>
+
+<div class="ai-container">
+
+  <!-- Chat Area -->
+  <div class="chat-pane">
+    <div id="chatMessages" class="chat-messages"></div>
+
+    <form id="chatForm" class="chat-input">
+      <label for="fileInput" class="attach-btn">📎</label>
+      <input type="file" id="fileInput" hidden>
+
+      <input type="text" id="userInput" placeholder="Ask about waste, tokens, energy..." required>
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <!-- Conversation History -->
+  <div class="history-pane">
+    <h4>Conversations</h4>
+    <ul id="conversationList">
+      <li class="history-item active">Current Session</li>
+    </ul>
+  </div>
+
+</div>
+
+<script>
+
+    const chatForm = document.getElementById("chatForm");
+    const chatMessages = document.getElementById("chatMessages");
+    const userInput = document.getElementById("userInput");
+    const fileInput = document.getElementById("fileInput");
+
+    function addMessage(text, sender) {
+    const div = document.createElement("div");
+    div.className = `message ${sender}`;
+    div.textContent = text;
+    chatMessages.appendChild(div);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    chatForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const message = userInput.value;
+    if (!message) return;
+
+    addMessage(message, "user");
+    userInput.value = "";
+
+    const formData = new FormData();
+    formData.append("message", message);
+
+    if (fileInput.files.length > 0) {
+        formData.append("file", fileInput.files[0]);
+    }
+
+    const response = await fetch("/chatbot/", {
+        method: "POST",
+        headers: {
+        "X-CSRFToken": getCSRFToken()
+        },
+        body: formData
+    });
+
+    const data = await response.json();
+    addMessage(data.response, "bot");
+    });
+
+    function getCSRFToken() {
+    return document.cookie
+        .split("; ")
+        .find(row => row.startsWith("csrftoken"))
+        ?.split("=")[1];
+    }
+
+
+</script>
+
+<script src="{% static 'js/ai_assistant.js' %}"></script>
+</body>
+</html>

@@ -14,6 +14,7 @@ urlpatterns = [
     path('rewards', views.rewards, name="reward"),
     path('nearby', views.nearby, name="nearby"),
     path('community', views.community, name="community"),
+    path('ai-assistant', views.ai_assistatnt, name="ai_assistant"),
     path('chatbot-response/', views.chatbot_response, name='chatbot_response'),
 
 
