@@ -5,16 +5,16 @@ import getpass
 import warnings
 from typing import List, Union
 from dotenv import load_dotenv
-# from langchain_community.document_loaders import (
-#     PyPDFLoader, CSVLoader
-# )
-# from langchain_core.prompts import PromptTemplate
-# from langchain_classic.chains import RetrievalQA
-# from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
-# from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_community.document_loaders import (
+    PyPDFLoader, CSVLoader
+)
+from langchain_core.prompts import PromptTemplate
+from langchain_classic.chains import RetrievalQA
+from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 # from langchain_community.vectorstores import Chroma
-# from langchain_community.vectorstores import FAISS
-# from langchain_core.documents import Document
+from langchain_community.vectorstores import FAISS
+from langchain_core.documents import Document
 
 warnings.filterwarnings("ignore", category=UserWarning)
 
@@ -31,8 +31,6 @@ if not GEMINI_API_KEY:
 
 
 def load_model():
-  from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
-
   """
   Func loads the model and embeddings
   """
@@ -51,9 +49,6 @@ def load_model():
 
 
 def load_documents(source_dir: str):
-    from langchain_community.document_loaders import (
-        PyPDFLoader, CSVLoader
-    )
     """
     Load documents from multiple sources
     """
@@ -77,13 +72,7 @@ def load_documents(source_dir: str):
     return documents
 
 
-def create_vector_store(docs, embeddings, chunk_size: int = 10000, chunk_overlap: int = 200):
-  from langchain_text_splitters import RecursiveCharacterTextSplitter
-  from langchain_community.vectorstores import FAISS
-  from langchain_core.documents import Document
-
-  docs: List[Document]
-
+def create_vector_store(docs: List[Document], embeddings, chunk_size: int = 10000, chunk_overlap: int = 200):
   """
   Create vector store from documents
   """
@@ -149,10 +138,6 @@ Empower users to understand their waste, sustainability data, and environmental 
 
 
 def get_qa_chain(source_dir):
-
-  from langchain_core.prompts import PromptTemplate
-  from langchain_classic.chains import RetrievalQA
-
   """Create QA chain with proper error handling"""
 
   try:
@@ -195,7 +180,7 @@ def query_system(query: str, qa_chain):
     result = qa_chain({"query": query})
     if not result["result"] or "don't know" in result["result"].lower():
       return "The answer could not be found in the provided documents"
-    return f"Ecoverse Agent 👷: {result['result']}" #\nSources: {[s.metadata['source'] for s in result['source_documents']]}"
+    return f"Reinsure Agent 👷: {result['result']}" #\nSources: {[s.metadata['source'] for s in result['source_documents']]}"
   except Exception as e:
     return f"Error processing query: {e}"
 
