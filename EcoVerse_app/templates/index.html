@@ -83,6 +83,27 @@
     .theme-toggle{border:none;background:transparent;padding:.5rem;border-radius:10px;cursor:pointer;color:var(--muted)}
     .theme-toggle:hover{background:hsl(210 16% 96%)}
     [data-theme="dark"] .theme-toggle:hover{background:hsl(210 10% 18%)}
+
+    /* Mobile view */
+    @media (max-width: 768px) {
+      .fade-in {
+        width: 100%;
+        height: auto;
+        padding-left: 0;
+        padding-right: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .fade-in .img {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        object-fit: contain;
+      }
+    }
+
   </style>
 </head>
 <body>
