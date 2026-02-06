@@ -107,6 +107,69 @@
 }
 
 
+/* ---------- Mobile Responsiveness ---------- */
+@media (max-width: 768px) {
+
+  .ai-container {
+    flex-direction: column;
+    height: 100dvh; /* better than 100vh on mobile */
+  }
+
+  /* Chat pane takes full screen */
+  .chat-pane {
+    flex: 1;
+    border-right: none;
+  }
+
+  /* Hide history by default (can be toggled later if needed) */
+  .history-pane {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 8px;
+    padding: 8px;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .history-item {
+    min-width: 140px;
+    white-space: nowrap;
+  }
+
+
+  /* Messages */
+  .chat-messages {
+    padding: 12px;
+  }
+
+  .message {
+    max-width: 90%;
+    font-size: 15px;
+    padding: 10px 12px;
+  }
+
+  /* Input area */
+  .chat-input {
+    padding: 10px;
+    gap: 6px;
+  }
+
+  .chat-input input[type="text"] {
+    font-size: 16px; /* prevents iOS zoom */
+    padding: 12px;
+  }
+
+  .chat-input button {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+
+  .attach-btn {
+    font-size: 20px;
+  }
+}
+
+
 </style>
 
 
