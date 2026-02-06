@@ -104,6 +104,123 @@
       }
     }
 
+    /* ===============================
+   Mobile Responsiveness
+   =============================== */
+
+@media (max-width: 768px) {
+
+  /* Container spacing */
+  .container {
+    padding: 0 0.75rem;
+  }
+
+  /* Header / Nav */
+  header {
+    backdrop-filter: none;
+  }
+
+  .nav {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .nav-links {
+    width: 100%;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .topbar-actions {
+    gap: 0.25rem;
+  }
+
+  /* Buttons */
+  .btn {
+    padding: 0.6rem 0.9rem;
+    font-size: 0.9rem;
+  }
+
+  /* Hero */
+  .hero {
+    padding: 4rem 0 2rem;
+  }
+
+  .hero-grid {
+    gap: 1.5rem;
+  }
+
+  .headline {
+    font-size: clamp(1.8rem, 7vw, 2.5rem);
+    line-height: 1.15;
+  }
+
+  .sub {
+    font-size: 1rem;
+    max-width: 100%;
+  }
+
+  .hero-img {
+    border-radius: 18px;
+    animation: none; /* better performance on mobile */
+  }
+
+  /* Sections */
+  .section {
+    padding: 2rem 0;
+  }
+
+  .section h2 {
+    font-size: 1.6rem;
+  }
+
+  /* Cards & grids */
+  .card {
+    padding: 1rem;
+    border-radius: 14px;
+  }
+
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  /* Stats */
+  .stat {
+    padding: 1.5rem;
+  }
+
+  .stat .value {
+    font-size: 1.6rem;
+  }
+
+  /* Icons */
+  .icon-pill {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+  }
+
+  /* Footer */
+  footer {
+    backdrop-filter: none;
+  }
+
+  .footer-wrap {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    padding: 1.5rem 0;
+  }
+
+  /* Touch improvements */
+  button,
+  .btn,
+  .theme-toggle {
+    min-height: 44px;
+  }
+}
+
+
   </style>
 </head>
 <body>

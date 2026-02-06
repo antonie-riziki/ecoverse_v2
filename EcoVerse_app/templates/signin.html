@@ -31,6 +31,107 @@
     .link{color:var(--primary);font-weight:600}
     .small{font-size:.9rem;color:var(--muted);text-align:center}
     .theme{position:fixed;top:14px;right:14px;border:none;background:transparent;color:var(--muted);padding:.5rem;border-radius:10px;cursor:pointer}
+  
+  
+  /* =========================
+   Tablet & small desktops ≤1024px
+   ========================= */
+@media (max-width: 1024px) {
+  .wrap {
+    max-width: 360px; /* slightly smaller wrap */
+    padding: 0 1rem;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+  }
+
+  p.sub {
+    font-size: 0.95rem;
+  }
+
+  .btn {
+    padding: 0.8rem 1rem;
+    font-size: 0.95rem;
+  }
+}
+
+/* =========================
+   Mobile ≤768px
+   ========================= */
+@media (max-width: 768px) {
+  body {
+    padding: 0.5rem;
+  }
+
+  .wrap {
+    max-width: 100%; /* full width on mobile */
+    padding: 0 0.5rem;
+  }
+
+  .panel {
+    padding: 1.5rem; /* reduce padding */
+    border-radius: 12px;
+  }
+
+  .logo {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 0.75rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  p.sub {
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+  }
+
+  input {
+    padding: 0.65rem 0.75rem;
+  }
+
+  .btn {
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+  }
+}
+
+/* =========================
+   Small mobile ≤480px
+   ========================= */
+@media (max-width: 480px) {
+  .panel {
+    padding: 1rem; /* compact card */
+  }
+
+  .logo {
+    width: 40px;
+    height: 40px;
+  }
+
+  h1 {
+    font-size: 1.25rem;
+  }
+
+  p.sub {
+    font-size: 0.8rem;
+  }
+
+  input {
+    padding: 0.5rem 0.65rem;
+  }
+
+  .btn {
+    padding: 0.6rem 0.9rem;
+    font-size: 0.9rem;
+  }
+}
+
+  
+  
   </style>
 </head>
 <body>

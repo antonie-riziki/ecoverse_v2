@@ -42,6 +42,141 @@
     .switch[data-on="true"]{background:var(--primary)}
     .switch[data-on="true"]::after{transform:translateX(18px)}
     .btn{display:inline-flex;align-items:center;gap:.5rem;border:0;border-radius:10px;padding:.6rem .9rem;background:linear-gradient(135deg,var(--primary),var(--primary-glow));color:#fff;cursor:pointer}
+  
+  
+  
+  /* =========================
+   Mobile Responsiveness ≤1024px (tablets)
+   ========================= */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 220px;
+  }
+
+  .main {
+    padding: 0.5rem;
+  }
+
+  .grid-2 {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .row {
+    grid-template-columns: 1fr;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+    font-size: 0.9rem;
+    padding: 0.6rem 0.8rem;
+  }
+
+  .btn {
+    padding: 0.55rem 0.8rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* =========================
+   Mobile Responsiveness ≤768px (phones)
+   ========================= */
+@media (max-width: 768px) {
+  /* Sidebar becomes top nav */
+  .sidebar {
+    position: relative;
+    width: 100%;
+    min-height: auto;
+    border-right: none;
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 0.5rem 0;
+  }
+
+  .sidebar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .menu {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    padding: 0;
+  }
+
+  .menu a {
+    padding: 0.5rem 0.75rem;
+    white-space: nowrap;
+  }
+
+  .main {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .row {
+    grid-template-columns: 1fr;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+    font-size: 0.85rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  label {
+    font-size: 0.85rem;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 0.85rem;
+    justify-content: center;
+  }
+
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
+
+/* =========================
+   Extra Small Phones ≤480px
+   ========================= */
+@media (max-width: 480px) {
+  h1, h2, h3, label {
+    font-size: 0.9rem;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+    padding: 0.45rem 0.6rem;
+  }
+
+  .btn {
+    padding: 0.45rem 0.6rem;
+    font-size: 0.8rem;
+  }
+
+  .menu a {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.85rem;
+  }
+}
+
+  
+  
   </style>
 </head>
 <body>

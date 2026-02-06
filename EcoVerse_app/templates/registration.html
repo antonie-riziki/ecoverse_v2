@@ -33,6 +33,78 @@
     .fade-in{animation:fade .4s ease both}
     @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
     .theme{position:fixed;top:14px;right:14px;border:none;background:transparent;color:var(--muted);padding:.5rem;border-radius:10px;cursor:pointer}
+  
+  
+  /* =========================
+   Mobile responsiveness ≤480px
+   ========================= */
+@media (max-width: 480px) {
+
+  body {
+    padding: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .wrap {
+    max-width: 100%;
+    padding: 0 1rem;
+  }
+
+  .card {
+    padding: 1.5rem;
+    border-radius: 12px;
+  }
+
+  .logo {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 0.75rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  p.sub {
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+  }
+
+  label {
+    font-size: 0.85rem;
+  }
+
+  input {
+    padding: 0.65rem 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .btn {
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+  }
+
+  .small {
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+  }
+
+  .bg-illus {
+    inset: -1px; /* make the background fit better on small screens */
+    opacity: 0.12;
+  }
+
+  .theme {
+    top: 10px;
+    right: 10px;
+    padding: 0.4rem;
+  }
+}
+
+  
   </style>
 </head>
 <body>

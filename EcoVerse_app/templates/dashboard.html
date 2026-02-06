@@ -318,6 +318,140 @@
         height: 350px;
     }
 
+    /* ===============================
+   Mobile Responsiveness
+   =============================== */
+
+@media (max-width: 768px) {
+
+  /* Base layout */
+  body {
+    flex-direction: column;
+  }
+
+  .main {
+    width: 100%;
+    padding: 0 12px;
+  }
+
+  /* Topbar */
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 0.75rem;
+  }
+
+  .theme {
+    align-self: flex-end;
+  }
+
+  /* Grids */
+  .grid,
+  .grid-4,
+  .grid-2 {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+  }
+
+  /* Cards */
+  .card {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  /* Stats */
+  .stat {
+    gap: 10px;
+  }
+
+  .stat .icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* Quick Actions */
+  .quick-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .action-btn {
+    padding: 1.25rem;
+  }
+
+  .action-btn i {
+    font-size: 1.75rem;
+  }
+
+  /* Stats Grid */
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .stat-card {
+    padding: 1.25rem;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+  }
+
+  /* Activity Table */
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  th {
+    font-size: 0.75rem;
+    padding: 0.5rem;
+  }
+
+  td {
+    font-size: 0.8rem;
+    padding: 0.75rem 0.5rem;
+  }
+
+  /* Charts */
+  .chart-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .chart-body {
+    height: 260px;
+    padding: 14px;
+  }
+
+  .chart-header {
+    padding: 14px;
+  }
+
+  .chart-title {
+    font-size: 16px;
+  }
+
+  /* Progress bars */
+  .progress {
+    height: 8px;
+  }
+
+  /* Activity list */
+  .activity {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  /* Touch improvements */
+  button,
+  .action-btn {
+    min-height: 44px;
+  }
+}
+
   </style>
 
 

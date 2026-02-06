@@ -363,6 +363,114 @@
             .map-card { height: 400px; }
             .stats-row { grid-template-columns: repeat(2, 1fr); }
         }
+
+
+
+
+    /* ==============================
+   Mobile Responsiveness (≤768px)
+   ============================== */
+@media (max-width: 768px) {
+
+  /* Sidebar: full width or hide if needed */
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    border-right: none;
+    box-shadow: none;
+  }
+
+  /* Main content: full width */
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 16px;
+  }
+
+  /* Page header spacing */
+  .page-header {
+    margin-bottom: 16px;
+  }
+
+  .page-title {
+    font-size: 22px;
+  }
+
+  .page-subtitle {
+    font-size: 13px;
+  }
+
+  /* Stats row: 1 or 2 columns */
+  .stats-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 12px;
+  }
+
+  .stat-value {
+    font-size: 18px;
+  }
+
+  /* Map container: stack vertically */
+  .map-container {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    height: auto;
+  }
+
+  .map-card {
+    height: 300px;
+  }
+
+  .map-sidebar {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  /* Insight items */
+  .insight-item {
+    padding: 10px;
+  }
+
+  .insight-title {
+    font-size: 14px;
+  }
+
+  .insight-desc {
+    font-size: 12px;
+  }
+
+  /* Location grid: single column */
+  .location-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .location-card {
+    padding: 12px;
+  }
+
+  .location-details {
+    font-size: 13px;
+  }
+
+  /* Buttons: touch-friendly */
+  .btn-primary, .btn-outline-primary {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+
+  /* Badges */
+  .badge {
+    font-size: 10px;
+    padding: 3px 6px;
+  }
+}
+
     </style>
 </head>
 <body>

@@ -34,6 +34,75 @@
     .card{background:var(--card);border:1px solid hsl(210 16% 92%);border-radius:16px;padding:1rem;box-shadow:var(--shadow)}
     .grid{display:grid;gap:1rem}
     @media(min-width:900px){.grid-2{grid-template-columns:2fr 1fr}}
+    /* ===============================
+   Mobile Responsiveness
+   =============================== */
+
+@media (max-width: 768px) {
+
+  /* Base layout */
+  body {
+    flex-direction: column;
+  }
+
+  /* Sidebar → hidden on mobile */
+  .sidebar {
+    display: none;
+    width: 100%;
+    min-height: auto;
+    position: static;
+    border-right: none;
+  }
+
+  /* Main content */
+  .main {
+    width: 100%;
+  }
+
+  /* Topbar */
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 0.75rem 1rem;
+  }
+
+  /* Cards */
+  .card {
+    padding: 0.9rem;
+    border-radius: 14px;
+  }
+
+  /* Grid collapse */
+  .grid,
+  .grid-2 {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem;
+  }
+
+  /* Brand sizing */
+  .brand {
+    padding: 0.75rem 1rem;
+  }
+
+  .logo {
+    width: 36px;
+    height: 36px;
+  }
+
+  /* Menu links (if sidebar is toggled later) */
+  .menu a {
+    padding: 0.75rem;
+    border-radius: 10px;
+  }
+
+  /* Touch improvements */
+  button,
+  a {
+    min-height: 44px;
+  }
+}
+
   </style>
 </head>
 <body>
