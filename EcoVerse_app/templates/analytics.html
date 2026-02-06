@@ -235,6 +235,111 @@
     .status.flagged { background: #f8d7da; color: #721c24; }
     .status.fraud { background: #f5c6cb; color: #721c24; }
 
+
+
+    /* ===============================
+   Mobile Responsiveness
+   =============================== */
+
+    @media (max-width: 768px) {
+
+      body {
+        flex-direction: column;
+        min-height: 100dvh;
+      }
+
+      /* MAIN CONTAINER */
+      .main {
+        width: 100%;
+        max-width: 100%;
+        margin-left: 0;
+        padding: 0 12px;
+      }
+
+      /* TOP BAR */
+      .topbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 0.75rem;
+      }
+
+      .controls {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      /* SEARCH */
+      .search {
+        min-width: 100%;
+        width: 100%;
+      }
+
+      .search input {
+        width: 100%;
+        font-size: 16px; /* prevents iOS zoom */
+      }
+
+      /* CARDS */
+      .cards {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .card {
+        padding: 14px;
+      }
+
+      .card .value {
+        font-size: 20px;
+      }
+
+      /* GRIDS */
+      .grid-2,
+      .grid-3 {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      /* CHARTS */
+      .chart-wrap {
+        height: 260px;
+        padding: 4px;
+      }
+
+      /* MAP */
+      .map-card {
+        height: 260px;
+      }
+
+      /* TABLE */
+      .table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+
+      .table th,
+      .table td {
+        font-size: 12px;
+        padding: 6px;
+      }
+
+      /* BUTTONS */
+      .btn,
+      .ghost {
+        padding: 10px 12px;
+        font-size: 14px;
+      }
+
+      /* FOOTER */
+      footer {
+        text-align: center;
+        padding-bottom: 12px;
+      }
+    }
+
+
   </style>
 </head>
 <body>
