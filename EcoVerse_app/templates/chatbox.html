@@ -210,6 +210,101 @@
 }
 
 
+/* ===============================
+   Mobile Responsiveness – Chatbot
+   =============================== */
+
+@media (max-width: 768px) {
+
+  /* Floating trigger */
+  .chatbot-container {
+    bottom: 16px;
+    right: 16px;
+  }
+
+  .chatbot-trigger {
+    width: 56px;
+    height: 56px;
+    font-size: 22px;
+  }
+
+  /* Chat window becomes fullscreen */
+  .chatbot-window {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100dvh;
+    bottom: 0;
+    right: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .chatbot-window.show {
+    display: flex;
+  }
+
+  /* Header */
+  .chatbot-header {
+    padding: 14px 16px;
+    border-radius: 0;
+  }
+
+  .chatbot-avatar {
+    width: 36px;
+    height: 36px;
+  }
+
+  .chatbot-name {
+    font-size: 0.95rem;
+  }
+
+  .chatbot-subtitle {
+    font-size: 0.8rem;
+  }
+
+  .chatbot-close {
+    font-size: 20px;
+    padding: 10px;
+  }
+
+  /* Body */
+  .chatbot-body {
+    padding: 14px;
+  }
+
+  .chat-message {
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .message-avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+
+  .message-content {
+    max-width: 85%;
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+
+  /* Input */
+  .chatbot-input {
+    padding: 12px;
+  }
+
+  .chat-input {
+    font-size: 16px; /* prevents iOS zoom */
+    padding: 12px 16px;
+  }
+
+  .send-btn {
+    width: 44px;
+    height: 44px;
+  }
+}
 
 
 </style>
