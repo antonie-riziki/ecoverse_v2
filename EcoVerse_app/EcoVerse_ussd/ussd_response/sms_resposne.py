@@ -1,15 +1,10 @@
-
-
 import africastalking
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
-africastalking.initialize(
-    username="EMID",
-    api_key=os.getenv("AT_API_KEY")
-)
+africastalking.initialize(username="EMID", api_key=os.getenv("AT_API_KEY"))
 
 sms = africastalking.SMS
 
@@ -25,7 +20,7 @@ def send_message(phone_number, message_context):
     message = f"{message_context}"
 
     # Set your shortCode or senderId
-    sender = 20880
+    sender = 20384
 
     try:
         response = sms.send(message, recipients, sender)
@@ -33,4 +28,4 @@ def send_message(phone_number, message_context):
         print(response)
 
     except Exception as e:
-        print(f'Houston, we have a problem: {e}')
+        print(f"Houston, we have a problem: {e}")

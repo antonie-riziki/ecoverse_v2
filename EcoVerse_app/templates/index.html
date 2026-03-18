@@ -1,23 +1,31 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>EcoVerse | Turning Waste Into Energy</title>
-  <meta name="description" content="EcoVerse: Turning waste into energy. Earn EcoTokens, track impact, and power a greener tomorrow." />
+  <meta name="description"
+    content="EcoVerse: Turning waste into energy. Earn EcoTokens, track impact, and power a greener tomorrow." />
   <link rel="canonical" href="./landingpage.html" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@500;700&display=swap"
+    rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
   <style>
-    :root{
-      --primary-h:160; --primary-s:100%; --primary-l:33%;
+    :root {
+      --primary-h: 160;
+      --primary-s: 100%;
+      --primary-l: 33%;
       --primary: hsl(var(--primary-h) var(--primary-s) var(--primary-l));
       --primary-glow: hsl(160 70% 45%);
-      --green-soft: hsl(157 56% 78%); /* #A8E6CF */
-      --brown: hsl(19 29% 28%); /* #5C4033 */
-      --bg: hsl(0 0% 99%); /* near #F9F9F9 */
+      --green-soft: hsl(157 56% 78%);
+      /* #A8E6CF */
+      --brown: hsl(19 29% 28%);
+      /* #5C4033 */
+      --bg: hsl(0 0% 99%);
+      /* near #F9F9F9 */
       --text: hsl(210 15% 15%);
       --muted: hsl(210 10% 40%);
       --card: #fff;
@@ -25,64 +33,318 @@
       --shadow: 0 10px 30px -10px hsl(var(--primary-h) var(--primary-s) / 0.25);
       --gradient-primary: linear-gradient(135deg, var(--primary), var(--primary-glow));
     }
-    [data-theme="dark"]{
+
+    [data-theme="dark"] {
       --bg: hsl(210 15% 8%);
       --text: hsl(0 0% 98%);
       --muted: hsl(210 10% 70%);
       --card: hsl(210 10% 12%);
     }
-    *{box-sizing:border-box}
-    html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;}
-    a{color:inherit;text-decoration:none}
-    img{max-width:100%;height:auto}
-    .container{max-width:1200px;margin:0 auto;padding:0 1rem}
-    header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,0.7);backdrop-filter:saturate(180%) blur(10px);border-bottom:1px solid hsl(210 16% 92%)}
-    [data-theme="dark"] header{background:rgba(20,24,28,0.6);border-color:hsl(210 10% 20%)}
-    .nav{display:flex;align-items:center;justify-content:space-between;padding:0.75rem 0}
-    .brand{display:flex;align-items:center;gap:.6rem;font-weight:700}
-    .brand .logo{width:36px;height:36px;border-radius:50%;background:var(--gradient-primary);display:grid;place-items:center;color:white;box-shadow:var(--shadow)}
-    .nav-links{display:flex;gap:1rem;align-items:center}
-    .btn{display:inline-flex;align-items:center;gap:.5rem;border:1px solid transparent;border-radius:999px;padding:.75rem 1rem;font-weight:600;transition:transform .2s ease, opacity .2s ease, box-shadow .2s ease}
-    .btn:hover{transform:translateY(-1px)}
-    .btn-primary{background:var(--gradient-primary);color:white;box-shadow:var(--shadow)}
-    .btn-outline{border-color:var(--primary);color:var(--primary);background:transparent}
-    .hero{position:relative;padding:6rem 0 3rem;background:
-      radial-gradient(1200px 500px at 80% -10%, hsl(160 60% 90%), transparent 70%),
-      linear-gradient(180deg, hsl(0 0% 100%), hsl(160 40% 96%));
+
+    * {
+      box-sizing: border-box
     }
-    [data-theme="dark"] .hero{background:
-      radial-gradient(1200px 500px at 80% -10%, hsl(160 50% 15%), transparent 70%),
-      linear-gradient(180deg, hsl(210 15% 10%), hsl(210 15% 8%));
+
+    html,
+    body {
+      margin: 0;
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
     }
-    .hero-grid{display:grid;grid-template-columns:1fr;gap:2rem;align-items:center}
-    @media(min-width:992px){.hero-grid{grid-template-columns:1.1fr .9fr}}
-    .headline{font-family:Poppins,Inter,sans-serif;font-size:clamp(2rem,4.5vw,3.5rem);font-weight:700;line-height:1.1;margin:0 0 1rem}
-    .accent{background:linear-gradient(90deg, var(--primary), var(--green-soft));-webkit-background-clip:text;background-clip:text;color:transparent}
-    .sub{font-size:1.125rem;color:var(--muted);max-width:52ch}
-    .card{background:var(--card);border:1px solid hsl(210 16% 92%);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow)}
-    [data-theme="dark"] .card{border-color:hsl(210 10% 20%)}
-    .grid-3{display:grid;grid-template-columns:1fr;gap:1rem}
-    @media(min-width:768px){.grid-3{grid-template-columns:repeat(3,1fr)}}
-    .section{padding:3rem 0}
-    .section h2{font-family:Poppins,Inter,sans-serif;font-size:2rem;margin:0 0 .75rem}
-    .muted{color:var(--muted)}
-    .stat{display:grid;place-items:center;padding:2rem}
-    .stat .value{font-size:2rem;color:var(--primary);font-weight:700}
-    .badge{display:inline-flex;align-items:center;gap:.5rem;padding:.5rem .75rem;border-radius:999px;background:hsl(160 70% 95%);color:var(--primary);font-weight:600}
-    footer{border-top:1px solid hsl(210 16% 92%);background:rgba(255,255,255,0.6);backdrop-filter:saturate(180%) blur(10px)}
-    [data-theme="dark"] footer{background:rgba(20,24,28,0.5);border-color:hsl(210 10% 20%)}
-    .footer-wrap{display:grid;grid-template-columns:1fr;gap:1rem;padding:2rem 0}
-    @media(min-width:768px){.footer-wrap{grid-template-columns:2fr 1fr}}
-    .hero-img{border-radius:24px;box-shadow:var(--shadow);animation:float 6s ease-in-out infinite}
-    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-    .fade-in{animation:fade-in .5s ease both}
-    @keyframes fade-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-    .icon-pill{width:56px;height:56px;border-radius:14px;display:grid;place-items:center;background:hsl(160 60% 92%);color:var(--primary)}
-    .link{color:var(--primary)}
-    .topbar-actions{display:flex;gap:.5rem;align-items:center}
-    .theme-toggle{border:none;background:transparent;padding:.5rem;border-radius:10px;cursor:pointer;color:var(--muted)}
-    .theme-toggle:hover{background:hsl(210 16% 96%)}
-    [data-theme="dark"] .theme-toggle:hover{background:hsl(210 10% 18%)}
+
+    a {
+      color: inherit;
+      text-decoration: none
+    }
+
+    img {
+      max-width: 100%;
+      height: auto
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: saturate(180%) blur(10px);
+      border-bottom: 1px solid hsl(210 16% 92%)
+    }
+
+    [data-theme="dark"] header {
+      background: rgba(20, 24, 28, 0.6);
+      border-color: hsl(210 10% 20%)
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 0
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      font-weight: 700
+    }
+
+    .brand .logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--gradient-primary);
+      display: grid;
+      place-items: center;
+      color: white;
+      box-shadow: var(--shadow)
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      align-items: center
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      padding: .75rem 1rem;
+      font-weight: 600;
+      transition: transform .2s ease, opacity .2s ease, box-shadow .2s ease
+    }
+
+    .btn:hover {
+      transform: translateY(-1px)
+    }
+
+    .btn-primary {
+      background: var(--gradient-primary);
+      color: white;
+      box-shadow: var(--shadow)
+    }
+
+    .btn-outline {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: transparent
+    }
+
+    .hero {
+      position: relative;
+      padding: 6rem 0 3rem;
+      background:
+        radial-gradient(1200px 500px at 80% -10%, hsl(160 60% 90%), transparent 70%),
+        linear-gradient(180deg, hsl(0 0% 100%), hsl(160 40% 96%));
+    }
+
+    [data-theme="dark"] .hero {
+      background:
+        radial-gradient(1200px 500px at 80% -10%, hsl(160 50% 15%), transparent 70%),
+        linear-gradient(180deg, hsl(210 15% 10%), hsl(210 15% 8%));
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      align-items: center
+    }
+
+    @media(min-width:992px) {
+      .hero-grid {
+        grid-template-columns: 1.1fr .9fr
+      }
+    }
+
+    .headline {
+      font-family: Poppins, Inter, sans-serif;
+      font-size: clamp(2rem, 4.5vw, 3.5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin: 0 0 1rem
+    }
+
+    .accent {
+      background: linear-gradient(90deg, var(--primary), var(--green-soft));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent
+    }
+
+    .sub {
+      font-size: 1.125rem;
+      color: var(--muted);
+      max-width: 52ch
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid hsl(210 16% 92%);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      box-shadow: var(--shadow)
+    }
+
+    [data-theme="dark"] .card {
+      border-color: hsl(210 10% 20%)
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem
+    }
+
+    @media(min-width:768px) {
+      .grid-3 {
+        grid-template-columns: repeat(3, 1fr)
+      }
+    }
+
+    .section {
+      padding: 3rem 0
+    }
+
+    .section h2 {
+      font-family: Poppins, Inter, sans-serif;
+      font-size: 2rem;
+      margin: 0 0 .75rem
+    }
+
+    .muted {
+      color: var(--muted)
+    }
+
+    .stat {
+      display: grid;
+      place-items: center;
+      padding: 2rem
+    }
+
+    .stat .value {
+      font-size: 2rem;
+      color: var(--primary);
+      font-weight: 700
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .5rem .75rem;
+      border-radius: 999px;
+      background: hsl(160 70% 95%);
+      color: var(--primary);
+      font-weight: 600
+    }
+
+    footer {
+      border-top: 1px solid hsl(210 16% 92%);
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: saturate(180%) blur(10px)
+    }
+
+    [data-theme="dark"] footer {
+      background: rgba(20, 24, 28, 0.5);
+      border-color: hsl(210 10% 20%)
+    }
+
+    .footer-wrap {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      padding: 2rem 0
+    }
+
+    @media(min-width:768px) {
+      .footer-wrap {
+        grid-template-columns: 2fr 1fr
+      }
+    }
+
+    .hero-img {
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      animation: float 6s ease-in-out infinite
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0)
+      }
+
+      50% {
+        transform: translateY(-8px)
+      }
+    }
+
+    .fade-in {
+      animation: fade-in .5s ease both
+    }
+
+    @keyframes fade-in {
+      from {
+        opacity: 0;
+        transform: translateY(8px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .icon-pill {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: hsl(160 60% 92%);
+      color: var(--primary)
+    }
+
+    .link {
+      color: var(--primary)
+    }
+
+    .topbar-actions {
+      display: flex;
+      gap: .5rem;
+      align-items: center
+    }
+
+    .theme-toggle {
+      border: none;
+      background: transparent;
+      padding: .5rem;
+      border-radius: 10px;
+      cursor: pointer;
+      color: var(--muted)
+    }
+
+    .theme-toggle:hover {
+      background: hsl(210 16% 96%)
+    }
+
+    [data-theme="dark"] .theme-toggle:hover {
+      background: hsl(210 10% 18%)
+    }
 
     /* Mobile view */
     @media (max-width: 768px) {
@@ -108,121 +370,121 @@
    Mobile Responsiveness
    =============================== */
 
-@media (max-width: 768px) {
+    @media (max-width: 768px) {
 
-  /* Container spacing */
-  .container {
-    padding: 0 0.75rem;
-  }
+      /* Container spacing */
+      .container {
+        padding: 0 0.75rem;
+      }
 
-  /* Header / Nav */
-  header {
-    backdrop-filter: none;
-  }
+      /* Header / Nav */
+      header {
+        backdrop-filter: none;
+      }
 
-  .nav {
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
+      .nav {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
 
-  .nav-links {
-    width: 100%;
-    justify-content: space-between;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
-  }
+      .nav-links {
+        width: 100%;
+        justify-content: space-between;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+      }
 
-  .topbar-actions {
-    gap: 0.25rem;
-  }
+      .topbar-actions {
+        gap: 0.25rem;
+      }
 
-  /* Buttons */
-  .btn {
-    padding: 0.6rem 0.9rem;
-    font-size: 0.9rem;
-  }
+      /* Buttons */
+      .btn {
+        padding: 0.6rem 0.9rem;
+        font-size: 0.9rem;
+      }
 
-  /* Hero */
-  .hero {
-    padding: 4rem 0 2rem;
-  }
+      /* Hero */
+      .hero {
+        padding: 4rem 0 2rem;
+      }
 
-  .hero-grid {
-    gap: 1.5rem;
-  }
+      .hero-grid {
+        gap: 1.5rem;
+      }
 
-  .headline {
-    font-size: clamp(1.8rem, 7vw, 2.5rem);
-    line-height: 1.15;
-  }
+      .headline {
+        font-size: clamp(1.8rem, 7vw, 2.5rem);
+        line-height: 1.15;
+      }
 
-  .sub {
-    font-size: 1rem;
-    max-width: 100%;
-  }
+      .sub {
+        font-size: 1rem;
+        max-width: 100%;
+      }
 
-  .hero-img {
-    border-radius: 18px;
-    animation: none; /* better performance on mobile */
-  }
+      .hero-img {
+        border-radius: 18px;
+        animation: none;
+        /* better performance on mobile */
+      }
 
-  /* Sections */
-  .section {
-    padding: 2rem 0;
-  }
+      /* Sections */
+      .section {
+        padding: 2rem 0;
+      }
 
-  .section h2 {
-    font-size: 1.6rem;
-  }
+      .section h2 {
+        font-size: 1.6rem;
+      }
 
-  /* Cards & grids */
-  .card {
-    padding: 1rem;
-    border-radius: 14px;
-  }
+      /* Cards & grids */
+      .card {
+        padding: 1rem;
+        border-radius: 14px;
+      }
 
-  .grid-3 {
-    grid-template-columns: 1fr;
-  }
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
 
-  /* Stats */
-  .stat {
-    padding: 1.5rem;
-  }
+      /* Stats */
+      .stat {
+        padding: 1.5rem;
+      }
 
-  .stat .value {
-    font-size: 1.6rem;
-  }
+      .stat .value {
+        font-size: 1.6rem;
+      }
 
-  /* Icons */
-  .icon-pill {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-  }
+      /* Icons */
+      .icon-pill {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+      }
 
-  /* Footer */
-  footer {
-    backdrop-filter: none;
-  }
+      /* Footer */
+      footer {
+        backdrop-filter: none;
+      }
 
-  .footer-wrap {
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
-    padding: 1.5rem 0;
-  }
+      .footer-wrap {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+        padding: 1.5rem 0;
+      }
 
-  /* Touch improvements */
-  button,
-  .btn,
-  .theme-toggle {
-    min-height: 44px;
-  }
-}
-
-
+      /* Touch improvements */
+      button,
+      .btn,
+      .theme-toggle {
+        min-height: 44px;
+      }
+    }
   </style>
 </head>
+
 <body>
   <header>
     <div class="container nav">
@@ -238,7 +500,8 @@
         <a href="/settings" class="link">Settings</a> -->
         <a class="btn btn-outline" href="/signin">Sign In</a>
         <a class="btn btn-primary" href="/registration">Register</a>
-        <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme"><i class="fa-solid fa-circle-half-stroke"></i></button>
+        <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme"><i
+            class="fa-solid fa-circle-half-stroke"></i></button>
       </nav>
     </div>
   </header>
@@ -248,15 +511,18 @@
       <div class="container hero-grid">
         <div class="fade-in">
           <span class="badge"><i class="fa-solid fa-recycle"></i> Sustainable by Design</span>
-          <h1 class="headline">Turning Organic Waste Into Energy. <span class="accent">Powering a Greener Tomorrow.</span></h1>
-          <p class="sub">Join the sustainability revolution. Transform your waste into valuable energy and earn rewards while saving the planet.</p>
+          <h1 class="headline">Turning Organic Waste Into Energy. <span class="accent">Powering a Greener
+              Tomorrow.</span></h1>
+          <p class="sub">Join the sustainability revolution. Transform your waste into valuable energy and earn rewards
+            while saving the planet.</p>
           <div style="display:flex; gap:.75rem; flex-wrap:wrap; margin-top:1rem">
             <a class="btn btn-primary" href="/registration">Join EcoVerse <i class="fa-solid fa-arrow-right"></i></a>
             <a class="btn btn-outline" href="/signin">Sign In</a>
           </div>
         </div>
         <div class="fade-in" style="animation-delay:.1s">
-          <img class="hero-img" src="https://www.techquintal.com/wp-content/uploads/2022/06/Biogas.jpg" alt="Green energy and sustainability"/>
+          <img class="hero-img" src="https://www.techquintal.com/wp-content/uploads/2022/06/Biogas.jpg"
+            alt="Green energy and sustainability" />
         </div>
       </div>
     </section>
@@ -288,7 +554,9 @@
     </section>
 
     <div class="fade-in" style="animation-delay:.1s; height: 600px; width:1100px; padding-left: 280px">
-      <img class="inblock-img" src="https://i0.wp.com/www.ecomena.org/wp-content/uploads/2013/12/waste-energy-schematic.jpg" alt="Green energy and sustainability"/>
+      <img class="inblock-img"
+        src="https://i0.wp.com/www.ecomena.org/wp-content/uploads/2013/12/waste-energy-schematic.jpg"
+        alt="Green energy and sustainability" />
     </div>
 
     <section class="section" style="background:hsl(160 70% 96%)">
@@ -322,15 +590,18 @@
         <div class="grid-3">
           <article class="card fade-in">
             <h4 style="margin:.25rem 0">Sarah Chen</h4>
-            <p class="muted" style="font-style:italic">“EcoVerse transformed how I think about waste. I've earned enough credits to offset my carbon footprint!”</p>
+            <p class="muted" style="font-style:italic">“EcoVerse transformed how I think about waste. I've earned enough
+              credits to offset my carbon footprint!”</p>
           </article>
           <article class="card fade-in" style="animation-delay:80ms">
             <h4 style="margin:.25rem 0">Michael Rodriguez</h4>
-            <p class="muted" style="font-style:italic">“The gamification aspect is brilliant. My whole family competes to collect the most EcoTokens.”</p>
+            <p class="muted" style="font-style:italic">“The gamification aspect is brilliant. My whole family competes
+              to collect the most EcoTokens.”</p>
           </article>
           <article class="card fade-in" style="animation-delay:160ms">
             <h4 style="margin:.25rem 0">Aisha Patel</h4>
-            <p class="muted" style="font-style:italic">“Finally, a platform that rewards sustainable behavior. The impact tracker keeps me motivated!”</p>
+            <p class="muted" style="font-style:italic">“Finally, a platform that rewards sustainable behavior. The
+              impact tracker keeps me motivated!”</p>
           </article>
         </div>
       </div>
@@ -344,7 +615,8 @@
           <div class="logo"><i class="fa-solid fa-leaf"></i></div>
           <span>EcoVerse</span>
         </div>
-        <p class="muted">EcoVerse is your digital sustainability companion—helping you act green, earn rewards, and visualize your eco impact.</p>
+        <p class="muted">EcoVerse is your digital sustainability companion—helping you act green, earn rewards, and
+          visualize your eco impact.</p>
       </div>
       <div>
         <nav style="display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1rem">
@@ -363,12 +635,13 @@
 
   <script>
     const toggle = document.getElementById('themeToggle');
-    toggle.addEventListener('click',()=>{
+    toggle.addEventListener('click', () => {
       document.documentElement.dataset.theme = document.documentElement.dataset.theme === 'dark' ? '' : 'dark';
       localStorage.setItem('theme', document.documentElement.dataset.theme || 'light');
     });
     const saved = localStorage.getItem('theme');
-    if(saved==='dark') document.documentElement.dataset.theme='dark';
+    if (saved === 'dark') document.documentElement.dataset.theme = 'dark';
   </script>
 </body>
+
 </html>

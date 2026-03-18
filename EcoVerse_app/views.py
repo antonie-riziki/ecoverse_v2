@@ -1,41 +1,41 @@
-from django.shortcuts import render
+import africastalking
+from django.shortcuts import render, redirect
+
 # import google.generativeai as genai # deprecated version
 from google import genai
 from google.genai import types
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
+from django.contrib.auth.models import User
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from dotenv import load_dotenv
 import os
 import sys
 import json
-import africastalking
 
 
+# from opik import configure
+# from opik.integrations.genai import track_genai
 
-# from opik import configure 
-# from opik.integrations.genai import track_genai 
 
-
-# configure() 
-
+# configure()
 
 
 load_dotenv()
 
-sys.path.insert(1, './EcoVerse_app')
-
+sys.path.insert(1, "./EcoVerse_app")
 
 
 # genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
 
-africastalking.initialize(
-    username="EMID",
-    api_key=os.getenv("AT_API_KEY")
-)
+africastalking.initialize(username="EMID", api_key=os.getenv("AT_API_KEY"))
 
 
+sms = africastalking.SMS
+airtime = africastalking.Airtime
 
 """
 
@@ -48,7 +48,7 @@ Opik Configuration for Gemini AI Model
 # opik_client = google.genai.Client()
 
 
-# client = track_genai(client) 
+# client = track_genai(client)
 
 
 # def opik_gemini_agent(prompt: str):
@@ -57,7 +57,6 @@ Opik Configuration for Gemini AI Model
 #     )
 
 #     return response.text
-
 
 
 def get_opik_client(base_client):
@@ -76,35 +75,25 @@ def get_opik_client(base_client):
         # Log locally, but never crash prod
         print("Opik disabled:", str(e))
         return base_client
-    
 
 
 def opik_gemini_agent(prompt: str):
     safe_client = get_opik_client(client)
 
     response = safe_client.models.generate_content(
-        model="gemini-2.0-flash-001",
-        
-        contents=prompt
+        model="gemini-2.0-flash-001", contents=prompt
     )
 
     return response.text
 
 
-
-
-
-
-
 def get_gemini_response(prompt):
 
     response = client.models.generate_content(
-        model='gemini-2.0-flash',
+        model="gemini-2.0-flash",
         contents=prompt,
         config=types.GenerateContentConfig(
-            system_instruction=
-            
-                """
+            system_instruction="""
                 
                 You are EcoVerse AI Assistant, an intelligent sustainability and green innovation expert designed to educate, guide, 
                 and support users in topics related to energy transformation, waste management, and environmental conservation.
@@ -166,82 +155,153 @@ def get_gemini_response(prompt):
                 - “How can households reduce energy waste?”
 
                 """,
-            max_output_tokens= 1000,
-            top_k= 2,
-            top_p= 0.5,
-            temperature= 0.9,
+            max_output_tokens=1000,
+            top_k=2,
+            top_p=0.5,
+            temperature=0.9,
             # response_mime_type= 'application/json',
             # stop_sequences= ['\n'],
             seed=42,
         ),
-
     )
-    
+
     return response.text
 
 
+def registration_message(phone_number):
+    amount = "10"
+    currency_code = "KES"
 
+    airtime_rec = "+254" + str(phone_number)
 
+    recipients = [f"+254{str(phone_number)}"]
 
+    # Set your message
+    message = (
+        f"Welcome to EcoVerse, a platform for green innovation and sustainability!"
+    )
+
+    # Set your shortCode or senderId
+    sender = 20384
+
+    try:
+        response = sms.send(message, recipients, sender)
+        responses = airtime.send(
+            phone_number=airtime_rec, amount=amount, currency_code=currency_code
+        )
+
+        print(response)
+        print(responses)
+
+    except Exception as e:
+        print(f"Houston, we have a problem: {e}")
 
 
 # Create your views here.
 def home(request):
-    return render(request, 'index.html')
+    return render(request, "index.html")
 
 
 def registration(request):
-    return render(request, 'registration.html')
+    if request.method == "POST":
+        full_name = request.POST.get("full_name")
+        email = request.POST.get("email")
+        phone = request.POST.get("phone")
+        password = request.POST.get("password")
+        confirm_password = request.POST.get("confirm_password")
+
+        # Check if passwords match
+        if password != confirm_password:
+            messages.error(request, "Passwords do not match")
+            return redirect("register")
+
+        # Check if email already exists
+        if User.objects.filter(username=email).exists():
+            messages.error(request, "Email already registered")
+            return redirect("register")
+
+        # Split full name
+        name_parts = full_name.split(" ")
+        first_name = name_parts[0]
+        last_name = " ".join(name_parts[1:]) if len(name_parts) > 1 else ""
+
+        # Create user
+        user = User.objects.create_user(
+            username=email,
+            email=email,
+            password=password,
+            first_name=first_name,
+            last_name=last_name,
+        )
+
+        user.save()
+
+        registration_message(phone)
+        messages.success(request, "Account created successfully")
+        return redirect("signin")
+
+    return render(request, "registration.html")
 
 
 def signin(request):
-    return render(request, 'signin.html')
+    if request.method == "POST":
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+
+        user = authenticate(request, username=email, password=password)
+
+        if user is not None:
+            login(request, user)
+            # login_message(user.phone_number)
+            return redirect("/dashboard")
+        else:
+            messages.error(request, "Invalid email or password")
+
+    return render(request, "signin.html")
 
 
 def dashboard(request):
-    return render(request, 'dashboard.html')
+    return render(request, "dashboard.html")
 
 
 def settings(request):
-    return render(request, 'settings.html')
+    return render(request, "settings.html")
 
 
 def rewards(request):
-    return render(request, 'rewards.html')
+    return render(request, "rewards.html")
 
 
 def impact(request):
-    return render(request, 'impact.html')
+    return render(request, "impact.html")
 
 
 def analytics(request):
-    return render(request, 'analytics.html')
+    return render(request, "analytics.html")
 
 
 def nearby(request):
-    return render(request, 'nearby.html')
+    return render(request, "nearby.html")
 
 
 def community(request):
-    return render(request, 'community.html')
+    return render(request, "community.html")
 
 
 def ai_assistant(request):
-    return render(request, 'ai_assist.html')
-
+    return render(request, "ai_assist.html")
 
 
 @csrf_exempt
 def chatbot_response(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         data = json.loads(request.body)
-        user_message = data.get('message', '')
+        user_message = data.get("message", "")
 
         if user_message:
             bot_reply = get_gemini_response(user_message)
             opik_response = opik_gemini_agent(user_message)
             # print("Opik Gemini Response:", opik_response)
-            return JsonResponse({'response': opik_response})
+            return JsonResponse({"response": opik_response})
         else:
-            return JsonResponse({'response': "Sorry, I didn't catch that."}, status=400)
-
+            return JsonResponse({"response": "Sorry, I didn't catch that."}, status=400)
