@@ -1,150 +1,164 @@
+{% extends "base_dashboard.html" %}
 
-{% load static %}
+{% block page_title %}Your Impact{% endblock %}
+{% block page_subtitle %}Visualize your contribution and see how the community performs{% endblock %}
 
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Impact | EcoVerse</title>
-  <meta name="description" content="Your overall contribution to the planet with community leaderboard and inspiring quote." />
-  <link rel="canonical" href="./impact.html" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-  <style>
-    :root{--primary-h:160;--primary-s:100%;--primary-l:33%;--primary:hsl(var(--primary-h) var(--primary-s) var(--primary-l));--primary-glow:hsl(160 70% 45%);--bg:hsl(0 0% 99%);--text:hsl(210 15% 15%);--muted:hsl(210 10% 40%);--card:#fff;--shadow:0 10px 30px -10px hsl(var(--primary-h) var(--primary-s) / .25)}
-    [data-theme="dark"]{--bg:hsl(210 15% 8%);--text:hsl(0 0% 98%);--muted:hsl(210 10% 70%);--card:hsl(210 10% 12%)}
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;min-height:100vh;display:flex}
-    .sidebar{width:260px;min-height:100vh;border-right:1px solid hsl(210 16% 92%);background:rgba(255,255,255,.6);backdrop-filter:saturate(180%) blur(8px);position:sticky;top:0}
-    [data-theme="dark"] .sidebar{background:rgba(20,24,28,.5);border-color:hsl(210 10% 20%)}
-    .brand{display:flex;align-items:center;gap:.6rem;padding:1rem}
-    .logo{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--primary-glow));display:grid;place-items:center;color:#fff;box-shadow:var(--shadow)}
-    .menu{padding:.5rem}
-    .menu a{display:flex;align-items:center;gap:.75rem;padding:.65rem .75rem;border-radius:12px;color:inherit}
-    .menu a:hover,.menu a[aria-current="page"]{background:hsl(160 70% 95%)}
-    [data-theme="dark"] .menu a:hover,[data-theme="dark"] .menu a[aria-current="page"]{background:hsl(210 10% 18%)}
-    .main{flex:1;display:flex;flex-direction:column;min-width:0}
-    .topbar{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid hsl(210 16% 92%)}
-    .muted{color:var(--muted)}
-    .card{background:var(--card);border:1px solid hsl(210 16% 92%);border-radius:16px;padding:1rem;box-shadow:var(--shadow)}
-    .grid{display:grid;gap:1rem}
-    @media(min-width:900px){.grid-2{grid-template-columns:2fr 1fr}}
-    /* ===============================
-   Mobile Responsiveness
-   =============================== */
-
-@media (max-width: 768px) {
-
-  /* Base layout */
-  body {
-    flex-direction: column;
+{% block extra_css %}
+<!-- Leaflet for map -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+  /* Impact Specific Styles */
+  .impact-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
   }
 
-  /* Sidebar → hidden on mobile */
-  .sidebar {
-    display: none;
-    width: 100%;
-    min-height: auto;
-    position: static;
-    border-right: none;
+  .map-container {
+    height: 350px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    z-index: 1; /* Keep map below navbar */
   }
 
-  /* Main content */
-  .main {
-    width: 100%;
+  .leaderboard-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: rank;
   }
 
-  /* Topbar */
-  .topbar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 0.75rem 1rem;
+  .leaderboard-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px dashed var(--border-color);
   }
 
-  /* Cards */
-  .card {
-    padding: 0.9rem;
-    border-radius: 14px;
+  .leaderboard-list li:last-child {
+    border-bottom: none;
   }
 
-  /* Grid collapse */
-  .grid,
-  .grid-2 {
-    grid-template-columns: 1fr !important;
-    gap: 0.75rem;
+  .leaderboard-list li::before {
+    counter-increment: rank;
+    content: counter(rank) ".";
+    color: var(--primary);
+    font-weight: 700;
+    width: 1.5rem;
   }
 
-  /* Brand sizing */
-  .brand {
-    padding: 0.75rem 1rem;
+  .quote-card {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: radial-gradient(circle at 50% -20%, var(--primary-soft) 0%, var(--bg-secondary) 100%);
+    border: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
   }
 
-  .logo {
-    width: 36px;
-    height: 36px;
+  .quote-icon {
+    font-size: 3rem;
+    color: var(--primary);
+    opacity: 0.1;
+    position: absolute;
+    top: 1rem;
+    left: 2rem;
   }
 
-  /* Menu links (if sidebar is toggled later) */
-  .menu a {
-    padding: 0.75rem;
-    border-radius: 10px;
+  @media (max-width: 992px) {
+    .impact-grid {
+      grid-template-columns: 1fr;
+    }
   }
+</style>
+{% endblock %}
 
-  /* Touch improvements */
-  button,
-  a {
-    min-height: 44px;
-  }
-}
-
-  </style>
-</head>
-<body>
-
-  {% include 'sidebar.html' %}
-
-  <div class="main">
-    <div class="topbar">
-      <div>
-        <h1 style="margin:0;font-family:Poppins,Inter,sans-serif">Your Impact</h1>
-        <p class="muted" style="margin:.25rem 0 0">Visualize your contribution and see how the community performs</p>
-      </div>
-      <button id="themeToggle" class="card" style="padding:.5rem .8rem;border:0" aria-label="Toggle theme">🌓</button>
+{% block content %}
+<section class="impact-grid mb-4">
+  <div class="card p-0 fade-in">
+    <div class="card-header p-3 border-bottom">
+      <h3 class="card-title">Global Impact Map</h3>
+      <p class="muted text-sm mt-1">Regions where your activities contribute to CO₂ reduction</p>
     </div>
-
-    <main style="padding:1.25rem;">
-      <section class="grid grid-2">
-        <div class="card" style="min-height:320px;background:radial-gradient(500px 200px at 50% 30%, hsl(160 60% 92%), transparent), linear-gradient(180deg,#fff,hsl(160 70% 96%))">
-          <h2 style="margin-top:0">Global Impact Map</h2>
-          <p class="muted">Regions where your activities contribute to CO₂ reduction</p>
-          <div style="height:220px;border-radius:12px;background:linear-gradient(135deg,hsl(160 70% 95%),#fff);display:grid;place-items:center;color:var(--muted)">[ Map Visualization Placeholder ]</div>
-        </div>
-        <div class="card">
-          <h2 style="margin-top:0">Community Leaderboard</h2>
-          <ol style="margin:0;padding-left:1.1rem">
-            <li><strong>Sarah Chen</strong> — 2,950 pts</li>
-            <li><strong>Michael Rodriguez</strong> — 2,730 pts</li>
-            <li><strong>You</strong> — 2,610 pts</li>
-            <li><strong>Aisha Patel</strong> — 2,480 pts</li>
-          </ol>
-        </div>
-      </section>
-
-      <section class="card" style="margin-top:1rem;text-align:center">
-        <blockquote style="font-family:Poppins,Inter,sans-serif;font-size:1.25rem;margin:0">“Small actions multiplied by millions of people can transform the world.”</blockquote>
-      </section>
-    </main>
+    <div id="map" class="map-container" style="border-radius: 0 0 var(--radius-md) var(--radius-md);"></div>
   </div>
-  <script>
-    const t=document.getElementById('themeToggle');
-    t.addEventListener('click',()=>{document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'':'dark';localStorage.setItem('theme',document.documentElement.dataset.theme||'light')});
-    if(localStorage.getItem('theme')==='dark')document.documentElement.dataset.theme='dark';
-  </script>
-</body>
-</html>
+
+  <div class="card fade-in" style="animation-delay: 0.1s">
+    <h3 class="card-title mb-3">Community Leaderboard</h3>
+    <ol class="leaderboard-list">
+      <li>
+        <span><strong>Sarah Chen</strong></span>
+        <span class="muted font-semibold">2,950 pts</span>
+      </li>
+      <li>
+        <span><strong>Michael Rodriguez</strong></span>
+        <span class="muted font-semibold">2,730 pts</span>
+      </li>
+      <li style="background: var(--primary-soft); padding: 0.75rem; border-radius: var(--radius-sm); margin: 0.25rem -0.75rem;">
+        <span style="color: var(--primary);"><strong>You</strong></span>
+        <span style="color: var(--primary);" class="font-semibold">2,610 pts</span>
+      </li>
+      <li>
+        <span><strong>Aisha Patel</strong></span>
+        <span class="muted font-semibold">2,480 pts</span>
+      </li>
+      <li>
+        <span><strong>David Kim</strong></span>
+        <span class="muted font-semibold">2,120 pts</span>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="card quote-card fade-in" style="animation-delay: 0.2s">
+  <i class="fas fa-quote-left quote-icon"></i>
+  <blockquote style="font-family: 'Poppins', var(--font-family); font-size: 1.5rem; margin: 0; line-height: 1.4; color: var(--text-main); font-weight: 600;">
+    “Small actions multiplied by millions of people can transform the world.”
+  </blockquote>
+  <p class="muted mt-3 font-semibold">— Howard Zinn</p>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Initialize map
+    const map = L.map('map', {zoomControl: true, scrollWheelZoom: false}).setView([20, 0], 2);
+    
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const tileUrl = isDark ? 
+      'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png' : 
+      'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+      
+    L.tileLayer(tileUrl, {
+      attribution: '© OpenStreetMap contributors, © CartoDB',
+      maxZoom: 19
+    }).addTo(map);
+
+    // Some sample global impact points
+    const impactLocations = [
+      { lat: -1.2921, lng: 36.8219, name: 'Nairobi Reforestation', impact: '500 trees' },
+      { lat: -3.0674, lng: 37.3556, name: 'Mt. Kilimanjaro Slopes', impact: '200 trees' },
+      { lat: 1.2921, lng: 36.8219, name: 'Central Kenya Biogas', impact: '50 units' },
+      { lat: 40.7128, lng: -74.0060, name: 'NYC Community Compost', impact: '2 tons' },
+      { lat: 51.5074, lng: -0.1278, name: 'London Tech Recycling', impact: '500 kg' }
+    ];
+
+    const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#05ac75';
+
+    impactLocations.forEach(loc => {
+      const marker = L.circleMarker([loc.lat, loc.lng], {
+        radius: 6,
+        fillColor: primaryColor,
+        color: '#fff',
+        weight: 1,
+        fillOpacity: 0.8
+      }).addTo(map);
+      
+      marker.bindPopup(`<strong>${loc.name}</strong><br/>Impact: ${loc.impact}`);
+    });
+  });
+</script>
+{% endblock %}

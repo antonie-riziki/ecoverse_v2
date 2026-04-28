@@ -1,482 +1,335 @@
+{% extends "base_dashboard.html" %}
 
-{% load static %}
+{% block page_title %}Analytics Dashboard{% endblock %}
+{% block page_subtitle %}Deep dive into your sustainability impact metrics{% endblock %}
 
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>EcoVerse — Analytics Dashboard</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <!-- Chart.js v4 -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <!-- Leaflet for map -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <!-- Font Awesome for icons -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
-  
-  <style>
-    :root{
-      /* --primary-h:160;
-      --primary-s:100%;
-      --primary-l:33%;
-      --primary:hsl(var(--primary-h) var(--primary-s) var(--primary-l)); */
-      --bg: #f6fbf8;
-      --primary-glow:hsl(160 70% 45%);
-      /* --bg:hsl(0 0% 99%);--text:hsl(210 15% 15%);--muted:hsl(210 10% 40%); */
-      --card: #ffffff;
-      --muted: #64707a;
-      --accent: #00A86B; /* primary green */
-      --accent-2: #1abc9c; /* teal */
-      --brown: #5C4033;
-      --glass: rgba(255,255,255,0.7);
-      --shadow: 0 8px 24px rgba(6,58,43,0.06);
-      --radius:16px;
-      --shadow:0 10px 30px -10px hsl(var(--primary-h) var(--primary-s) / .25);
-      --mono: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+{% block extra_css %}
+<!-- Leaflet for map -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+  /* Analytics Specific Styles */
+  .search-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--card-bg);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    flex: 1;
+    max-width: 400px;
+  }
+
+  .search-bar input {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 0.95rem;
+    width: 100%;
+    color: var(--text-main);
+  }
+
+  .controls-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .metric-card {
+    padding: 1.5rem;
+  }
+
+  .metric-title {
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .metric-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 0.25rem;
+  }
+
+  .metric-desc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .analytics-grid-2 {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .analytics-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+    padding: 1rem 0;
+  }
+
+  .chart-container-sm {
+    height: 220px;
+  }
+
+  .map-container {
+    height: 350px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    z-index: 1; /* Keep map below navbar */
+  }
+
+  .data-list {
+    max-height: 250px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+  }
+
+  .data-item {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .data-item:last-child {
+    border-bottom: none;
+  }
+
+  /* Custom scrollbar for data lists */
+  .data-list::-webkit-scrollbar {
+    width: 6px;
+  }
+  .data-list::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .data-list::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 10px;
+  }
+
+  .anomaly-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .anomaly-investigate { background: rgba(245, 158, 11, 0.1); color: #b45309; }
+  .anomaly-flagged { background: rgba(239, 68, 68, 0.1); color: #b91c1c; }
+  .anomaly-fraud { background: rgba(220, 38, 38, 0.15); color: #991b1b; }
+
+  @media (max-width: 1024px) {
+    .analytics-grid-2 {
+      grid-template-columns: 1fr;
     }
-    
-    
-    *{
-      box-sizing:border-box
+  }
+
+  @media (max-width: 768px) {
+    .analytics-grid-3 {
+      grid-template-columns: 1fr;
     }
-
-    body{
-      margin:0;
-      padding-bottom: 1.5em;
-      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-      color:var(--text);
-      font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      min-height:100vh;
-      display:flex
-    
+    .controls-row {
+      flex-direction: column;
+      align-items: stretch;
     }
-    
-    .main{
-      flex:1;
-      margin-left: 7px;
-      padding-left: -25px;
-      display:flex;
-      flex-direction:column;
-      min-width: 0;
-      width: calc(100% - 260px);
-      max-width:max-content;
+    .search-bar {
+      max-width: 100%;
     }
+  }
+</style>
+{% endblock %}
 
+{% block content %}
+<!-- Controls Row -->
+<div class="controls-row">
+  <div class="search-bar">
+    <i class="fa-solid fa-magnifying-glass text-muted"></i>
+    <input id="q" placeholder="Search data, hubs, transactions..." />
+  </div>
+  <div style="display: flex; gap: 0.75rem;">
+    <button class="btn btn-outline" onclick="exportCSV()"><i class="fas fa-file-csv mr-2"></i>Export CSV</button>
+    <button class="btn btn-primary" onclick="downloadPNG()"><i class="fas fa-download mr-2"></i>Download Charts</button>
+  </div>
+</div>
 
-    .topbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:1rem 1.25rem;
-      border-bottom:1px solid hsl(210 16% 92%)
-    }
+<!-- Summary Metrics -->
+<section class="metrics-grid">
+  <div class="card metric-card fade-in">
+    <div class="metric-title">Waste Recycled</div>
+    <div class="metric-value" id="totalWaste">0 kg</div>
+    <div class="metric-desc">Total organic waste collected in selected period</div>
+  </div>
+  <div class="card metric-card fade-in" style="animation-delay: 0.1s">
+    <div class="metric-title">Energy Generated</div>
+    <div class="metric-value" id="energyGen">0 kWh</div>
+    <div class="metric-desc">Estimated from biogas & anaerobic digestion</div>
+  </div>
+  <div class="card metric-card fade-in" style="animation-delay: 0.2s">
+    <div class="metric-title">Carbon Credits Issued</div>
+    <div class="metric-value" id="credits">0</div>
+    <div class="metric-desc">Verified and tokenized carbon credits</div>
+  </div>
+</section>
 
-    .search{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      background:var(--card);
-      padding:8px 12px;
-      border-radius:12px;
-      box-shadow:var(--shadow);
-      min-width:320px
-    }
-
-    .search input{
-      border:0;
-      outline:none;
-      background:transparent;
-      font-size:14px
-    }
-
-    .cards{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:14px;
-      margin-bottom:16px
-    }
-
-    .card{
-      background:var(--card);
-      padding:16px;
-      border-radius:12px;
-      box-shadow:var(--shadow)
-    }
-
-    .card h4{
-      margin:0;
-      color:var(--muted);
-      font-weight:600;
-      font-size:13px
-    }
-
-    .card .value{
-      font-size:22px;
-      font-weight:800;
-      margin-top:8px;
-      color:#083826
-    }
-
-    .grid-2{
-      display:grid;
-      grid-template-columns:2fr 1fr;
-      gap:14px
-    }
-
-    .grid-3{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:14px
-    }
-
-    .chart-wrap{
-      height:320px;
-      padding:8px
-    }
-
-    .small{
-      font-size:13px;
-      color:var(--muted)
-    }
-
-    .table{
-      width:100%;
-      border-collapse:collapse
-    }
-
-    .table th,.table td{
-      padding:8px;
-      border-bottom:1px solid #eef7ef;
-      text-align:left;
-      font-size:13px
-    }
-
-    .badge{
-      padding:6px 8px;
-      border-radius:8px;
-      font-weight:700;
-      font-size:12px
-    }
-    
-    .fraud{
-      background:#ffe6e6;
-      color:#8c1b1b
-    }
-
-    .approved{
-      background:#e6fff2;
-      color:#0d6b3f
-    }
-
-    .pending{
-      background:#fff4e6;
-      color:#8a5b00
-    }
-
-    .map-card{
-      height:360px;
-      border-radius:10px;
-      overflow:hidden
-    }
-
-    .controls{
-      display:flex;
-      gap:8px;
-      align-items:center
-    }
-
-    .btn{
-      background:var(--accent);
-      color:white;
-      padding:8px 10px;
-      border-radius:8px;
-      border:0;
-      cursor:pointer
-    }
-
-    .ghost{
-      background:transparent;
-      border:1px solid #dbeee0;
-      color:#0b3b2e;
-      padding:8px 10px;
-      border-radius:8px;
-      cursor:pointer
-    }
-
-    footer{
-      margin-top:18px;
-      color:var(--muted);
-      font-size:13px
-    }
-
-    @media(max-width:980px){
-      .layout{
-        grid-template-columns:1fr;
-      }
-      .cards{
-        grid-template-columns:1fr}
-        .grid-2{
-          grid-template-columns:1fr
-        }
-        .grid-3{
-          grid-template-columns:1fr
-        }
-      }
-
-    .anomaly-item .status {
-      padding: 4px 8px;
-      border-radius: 6px;
-      text-transform: capitalize;
-      font-weight: bold;
-      font-size: 0.8rem;
-    }
-    .status.investigate { background: #fff3cd; color: #856404; }
-    .status.flagged { background: #f8d7da; color: #721c24; }
-    .status.fraud { background: #f5c6cb; color: #721c24; }
-
-
-
-    /* ===============================
-   Mobile Responsiveness
-   =============================== */
-
-    @media (max-width: 768px) {
-
-      body {
-        flex-direction: column;
-        min-height: 100dvh;
-      }
-
-      /* MAIN CONTAINER */
-      .main {
-        width: 100%;
-        max-width: 100%;
-        margin-left: 0;
-        padding: 0 12px;
-      }
-
-      /* TOP BAR */
-      .topbar {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 12px;
-        padding: 0.75rem;
-      }
-
-      .controls {
-        width: 100%;
-        justify-content: space-between;
-      }
-
-      /* SEARCH */
-      .search {
-        min-width: 100%;
-        width: 100%;
-      }
-
-      .search input {
-        width: 100%;
-        font-size: 16px; /* prevents iOS zoom */
-      }
-
-      /* CARDS */
-      .cards {
-        grid-template-columns: 1fr;
-        gap: 12px;
-      }
-
-      .card {
-        padding: 14px;
-      }
-
-      .card .value {
-        font-size: 20px;
-      }
-
-      /* GRIDS */
-      .grid-2,
-      .grid-3 {
-        grid-template-columns: 1fr;
-        gap: 12px;
-      }
-
-      /* CHARTS */
-      .chart-wrap {
-        height: 260px;
-        padding: 4px;
-      }
-
-      /* MAP */
-      .map-card {
-        height: 260px;
-      }
-
-      /* TABLE */
-      .table {
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
-      }
-
-      .table th,
-      .table td {
-        font-size: 12px;
-        padding: 6px;
-      }
-
-      /* BUTTONS */
-      .btn,
-      .ghost {
-        padding: 10px 12px;
-        font-size: 14px;
-      }
-
-      /* FOOTER */
-      footer {
-        text-align: center;
-        padding-bottom: 12px;
-      }
-    }
-
-
-  </style>
-</head>
-<body>
-  <!-- <div class="layout"> -->
-    
-  {% include 'sidebar.html' %}
-
-  <main class="main" role="main">
-    <div class="topbar">
-      <div style="display:flex;gap:12px;align-items:center">
-        <!-- <h1 style="margin:0;font-family:Poppins,Inter,sans-serif">Dashboard</h1><br>
-        <p class="muted" style="margin:.25rem 0 0">Here's your sustainability impact overview</p><br> -->
-        <div class="search" role="search">
-          <i class="fa-solid fa-magnifying-glass" style="color:#0b3b2e"></i>
-          <input id="q" placeholder="Search data, hubs, transactions..." />
-        </div>
-        <div class="controls">
-          <button class="ghost" onclick="exportCSV()">Export CSV</button>
-          <button class="btn" onclick="downloadPNG()">Download Charts</button>
-        </div>
+<!-- Main Analytics Grid -->
+<section class="analytics-grid-2">
+  <!-- Left Column -->
+  <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+    <div class="card fade-in">
+      <div class="card-header">
+        <h3 class="card-title">Weekly Contribution Trend</h3>
+        <p class="muted text-sm mt-1">Daily collected waste (kg) and energy generated (kWh)</p>
       </div>
-      <div style="display:flex;gap:12px;align-items:center">
-        <div class="small">Notifications</div>
-        <i class="fa-solid fa-bell" style="font-size:16px;color:#0b3b2e"></i>
+      <div class="chart-container">
+        <canvas id="lineChart"></canvas>
       </div>
-      <button id="themeToggle" class="btn" aria-label="Toggle theme">🌓</button>
     </div>
 
-    <!-- Summary cards -->
-    <section class="cards" aria-label="Summary metrics">
-      <div class="card">
-        <h4>Waste Recycled</h4>
-        <div class="value" id="totalWaste">0 kg</div>
-        <div class="small">Total organic waste collected in selected period</div>
-      </div>
-      <div class="card">
-        <h4>Energy Generated</h4>
-        <div class="value" id="energyGen">0 kWh</div>
-        <div class="small">Estimated from biogas & anaerobic digestion</div>
-      </div>
-      <div class="card">
-        <h4>Carbon Credits Issued</h4>
-        <div class="value" id="credits">0</div>
-        <div class="small">Verified and tokenized carbon credits</div>
-      </div>
-    </section>
-
-    <section class="grid-2" aria-label="Charts and map">
-      <div>
-        <div class="card">
-          <h4>Weekly Contribution Trend</h4>
-          <div class="chart-wrap"><canvas id="lineChart"></canvas></div>
-          <div class="small">Daily collected waste (kg) and energy generated (kWh)</div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+      <div class="card fade-in">
+        <div class="card-header">
+          <h3 class="card-title">Waste Composition</h3>
+          <p class="muted text-sm mt-1">Breakdown by waste type</p>
         </div>
-
-        <div style="display:flex;gap:14px;margin-top:14px">
-          <div class="card" style="flex:1">
-            <h4>Waste Composition</h4>
-            <div class="chart-wrap" style="height:220px"><canvas id="pieChart"></canvas></div>
-            <div class="small">Breakdown by waste type</div>
-          </div>
-
-          <div class="card" style="width:360px">
-            <h4>Top Households / Hubs</h4>
-            <table class="table" aria-label="Top households">
-              <thead><tr><th>Hub</th><th>kg</th><th>credits</th></tr></thead>
-              <tbody id="topTable"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <div style="display:flex;gap:14px;margin-top:14px">
-          <div class="card" style="flex:1">
-            <h4>Energy vs Waste (Scatter)</h4>
-            <div class="chart-wrap" style="height:260px"><canvas id="scatter"></canvas></div>
-            <div class="small">Each point = one drop event (kg vs kWh)</div>
-          </div>
-
-          <div class="card" style="width:360px">
-            <h4>Anomalies & Flags</h4>
-            <div id="anomalyList" style="max-height:190px;overflow:auto"></div>
-          </div>
+        <div class="chart-container chart-container-sm">
+          <canvas id="pieChart"></canvas>
         </div>
       </div>
 
-      <!-- Right column -->
-      <aside>
-        <div class="card map-card">
-          <h4>Impact Map — Nairobi</h4>
-          <div id="map" style="height:290px"></div>
-          <div class="small" style="margin-top:6px">Hover markers for details. Color indicates status.</div>
+      <div class="card fade-in">
+        <div class="card-header">
+          <h3 class="card-title">Top Hubs</h3>
         </div>
-
-        <div class="card" style="margin-top:14px">
-          <h4>Token Issuance Over Time</h4>
-          <div class="chart-wrap" style="height:180px"><canvas id="barChart"></canvas></div>
-          <div class="small">EcoTokens issued per week</div>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Hub</th>
+                <th>Kg</th>
+                <th>Credits</th>
+              </tr>
+            </thead>
+            <tbody id="topTable">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
         </div>
+      </div>
+    </div>
 
-        <div class="card" style="margin-top:14px">
-          <h4>Community Leaderboard</h4>
-          <ol id="leaderboard" style="padding-left:18px;margin:6px 0"></ol>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+      <div class="card fade-in">
+        <div class="card-header">
+          <h3 class="card-title">Energy vs Waste (Scatter)</h3>
+          <p class="muted text-sm mt-1">Each point = one drop event</p>
         </div>
-      </aside>
-    </section>
-
-    <section class="grid-3" style="margin-top:14px" aria-label="More analytics">
-      <div class="card">
-        <h4>Waste by Region (Stacked)</h4>
-        <div class="chart-wrap" style="height:220px"><canvas id="stacked"></canvas></div>
-        <div class="small">Comparison across areas</div>
+        <div class="chart-container chart-container-sm">
+          <canvas id="scatter"></canvas>
+        </div>
       </div>
 
-      <div class="card">
-        <h4>User Progress Radar</h4>
-        <div class="chart-wrap" style="height:220px"><canvas id="radar"></canvas></div>
-        <div class="small">Profile: consistency, variety, impact, redeeming, engagement</div>
+      <div class="card fade-in">
+        <div class="card-header">
+          <h3 class="card-title">Anomalies & Flags</h3>
+        </div>
+        <div class="data-list" id="anomalyList">
+          <!-- Populated by JS -->
+        </div>
       </div>
-
-      <div class="card">
-        <h4>Transactions / Recent Activity</h4>
-        <div id="txList" style="max-height:220px;overflow:auto"></div>
-      </div>
-    </section>
-
-  </main>
+    </div>
   </div>
-  </body>
 
-  {% include 'chatbox.html' %}
+  <!-- Right Column -->
+  <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+    <div class="card p-0 fade-in">
+      <div class="card-header p-3 border-bottom">
+        <h3 class="card-title">Impact Map — Nairobi</h3>
+        <p class="muted text-sm mt-1">Hover markers for details</p>
+      </div>
+      <div id="map" class="map-container" style="border-radius: 0 0 var(--radius-md) var(--radius-md);"></div>
+    </div>
 
-  <!-- Dependencies -->
-  <!-- <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script> -->
+    <div class="card fade-in">
+      <div class="card-header">
+        <h3 class="card-title">Token Issuance</h3>
+        <p class="muted text-sm mt-1">EcoTokens issued per week</p>
+      </div>
+      <div class="chart-container chart-container-sm">
+        <canvas id="barChart"></canvas>
+      </div>
+    </div>
 
-  <script>
-  
-  
+    <div class="card fade-in">
+      <div class="card-header">
+        <h3 class="card-title">Community Leaderboard</h3>
+      </div>
+      <ol id="leaderboard" style="padding-left: 1.5rem; margin: 0; color: var(--text-main); font-weight: 500;">
+        <!-- Populated by JS -->
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- Bottom Analytics Row -->
+<section class="analytics-grid-3">
+  <div class="card fade-in">
+    <div class="card-header">
+      <h3 class="card-title">Waste by Region</h3>
+      <p class="muted text-sm mt-1">Comparison across areas</p>
+    </div>
+    <div class="chart-container chart-container-sm">
+      <canvas id="stacked"></canvas>
+    </div>
+  </div>
+
+  <div class="card fade-in">
+    <div class="card-header">
+      <h3 class="card-title">User Progress Radar</h3>
+      <p class="muted text-sm mt-1">Your sustainability profile</p>
+    </div>
+    <div class="chart-container chart-container-sm">
+      <canvas id="radar"></canvas>
+    </div>
+  </div>
+
+  <div class="card fade-in">
+    <div class="card-header">
+      <h3 class="card-title">Recent Activity</h3>
+    </div>
+    <div class="data-list" id="txList">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
   /***********************
    * Sample dataset
    ***********************/
@@ -495,14 +348,7 @@
     wasteKg: [12, 10, 14, 44, 20, 18, 12, 16, 14, 32, 24, 19, 11, 21],
     energyKwh: [6,4,7,5,40,9,11,8,7,22,12,10,13,11],
     tokensIssued: [40,30,50,35,80,70,90,64,55,46,90,74,62,85],
-    // waste composition
-    comp: {
-      organic: 62,
-      plastic: 18,
-      metal: 6,
-      glass: 7,
-      other: 7
-    },
+    comp: { organic: 62, plastic: 18, metal: 6, glass: 7, other: 7 },
     hubs: [
       {name:'Embakasi Hub', kg: 1240, credits: 620},
       {name:'Dandora Hub', kg: 980, credits: 490},
@@ -523,11 +369,6 @@
     ]
   };
 
-  // </script>
-
-  // <script>
-
-  // Nairobi markers (spread across eastlands to westlands)
   const claimLocations = [
     { id: 1, lat: -1.303200, lng: 36.861000, neighbourhood: "Embakasi", status: "Fully Occupied", weight: 45230, type: "Community Hub" },
     { id: 2, lat: -1.248000, lng: 36.905000, neighbourhood: "Dandora", status: "Empty", weight: 23150, type: "Household" },
@@ -539,193 +380,234 @@
     { id: 8, lat: -1.320853, lng: 36.684936, neighbourhood: "Karen", status: "Pre-Occupied", weight: 41300, type: "Community Hub" }
   ];
 
+  let lineChart, pieChart, scatter, barChart, stacked, radar;
 
-  document.addEventListener('DOMContentLoaded', (event) => {
-  /***********************
-   * Utility & DOM Setup
-   ***********************/
+  document.addEventListener('DOMContentLoaded', () => {
+    // Populate summary metrics
     document.getElementById('totalWaste').textContent = sample.wasteKg.reduce((a,b)=>a+b,0) + ' kg';
     document.getElementById('energyGen').textContent = sample.energyKwh.reduce((a,b)=>a+b,0) + ' kWh';
     document.getElementById('credits').textContent = Math.round(sample.tokensIssued.reduce((a,b)=>a+b,0) / 10);
-    document.getElementById('activeHubs').textContent = claimLocations.length;
-    document.getElementById('participants').textContent = '1,234';
-   
 
-    // top table
+    // Populate Top Table
     const topTable = document.getElementById('topTable');
     sample.hubs.forEach(h => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${h.name}</td><td>${h.kg}</td><td>${h.credits}</td>`;
-      topTable.appendChild(tr);
+      topTable.insertAdjacentHTML('beforeend', `<tr><td>${h.name}</td><td>${h.kg}</td><td>${h.credits}</td></tr>`);
     });
 
-    // anomalies
+    // Populate Anomalies
     const anomalyList = document.getElementById('anomalyList');
-    sample.anomalies.forEach(a=>{
-      const div = document.createElement('div');
-      div.style.padding='8px';div.style.marginBottom='8px';div.style.borderRadius='8px';div.style.background='linear-gradient(180deg,#fff,#f7fff9)';
-      div.innerHTML = `<div style="display:flex;justify-content:space-between;"><div><strong>${a.hub}</strong><div class="small">${a.desc}</div></div><div style="text-align:right"><div class="small">${a.date}</div><div style="margin-top:6px"><span class="badge ${a.status==='Fully Occupied'?'Fully Occupied':a.status==='flagged'?'Pre-Occupied':'Empty'}">${a.status.toUpperCase()}</span></div></div></div>`;
-      anomalyList.appendChild(div);
+    sample.anomalies.forEach(a => {
+      const badgeClass = a.status === 'investigate' ? 'anomaly-investigate' : (a.status === 'flagged' ? 'anomaly-flagged' : 'anomaly-fraud');
+      anomalyList.insertAdjacentHTML('beforeend', `
+        <div class="data-item p-2 mb-2 rounded" style="background: var(--bg-secondary);">
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.25rem;">
+            <strong style="color: var(--text-main); font-size: 0.9rem;">${a.hub}</strong>
+            <span class="anomaly-badge ${badgeClass}">${a.status}</span>
+          </div>
+          <div class="text-sm muted">${a.desc}</div>
+          <div class="text-xs muted mt-1">${a.date}</div>
+        </div>
+      `);
     });
 
+    // Populate Activity
+    const txList = document.getElementById('txList');
+    sample.events.forEach(e => {
+      const amtColor = e.amt > 0 ? 'var(--success)' : (e.amt < 0 ? 'var(--danger)' : 'var(--text-muted)');
+      txList.insertAdjacentHTML('beforeend', `
+        <div class="data-item">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-weight: 500; font-size: 0.9rem;">${e.desc}</div>
+              <div class="text-xs muted">${e.time}</div>
+            </div>
+            <div style="font-weight: 700; color: ${amtColor}">${e.amt > 0 ? '+' + e.amt : e.amt}</div>
+          </div>
+        </div>
+      `);
+    });
+
+    // Populate Leaderboard
+    const leaderboard = document.getElementById('leaderboard');
+    ['Amara (Kibera)','Mwangi (Embakasi)','Amina (Dandora)','John (Karen)','Fatuma (Westlands)'].forEach((n,i) => {
+      leaderboard.insertAdjacentHTML('beforeend', `<li style="padding: 0.5rem 0; border-bottom: 1px dashed var(--border-color);">${n} &mdash; ${Math.round(1200/(i+1))} kg</li>`);
+    });
+
+    // Initialize Charts
+    initCharts();
+
+    // Initialize Map
+    initMap();
   });
 
-  // tx list
-  const txList = document.getElementById('txList');
-  sample.events.forEach(e=>{
-    const d = document.createElement('div');
-    d.style.padding='10px';d.style.borderBottom='1px solid #eef7ef';
-    d.innerHTML = `<div style="display:flex;justify-content:space-between"><div><strong>${e.desc}</strong><div class="small">${e.time}</div></div><div style="font-weight:700;color:${e.amt>0?'#0b6b36':'#8b2a2a'}">${e.amt>0? '+'+e.amt: e.amt}</div></div>`;
-    txList.appendChild(d);
-  });
+  function initCharts() {
+    // Style config based on CSS vars
+    const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-main').trim() || '#333';
+    const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--border-color').trim() || '#eee';
+    
+    Chart.defaults.color = textColor;
+    Chart.defaults.font.family = 'Inter, sans-serif';
+    Chart.defaults.scale.grid.color = gridColor;
 
-  // leaderboard
-  const leaderboard = document.getElementById('leaderboard');
-  ['Amara (Kibera)','Mwangi (Embakasi)','Amina (Dandora)','John (Karen)','Fatuma (Westlands)'].forEach((n,i)=>{
-    const li = document.createElement('li');
-    li.textContent = `${n} — ${Math.round(1200/(i+1))} kg`;
-    leaderboard.appendChild(li);
-  });
+    const palette = {
+      primary: '#05ac75',
+      blue: '#2e86de',
+      purple: '#9b59b6',
+      coral: '#FF6B6B',
+      amber: '#f59e0b'
+    };
 
-  /***********************
-   * Charts
-   ***********************/
-  // color palette
-  const palette = {
-    green:'#00A86B', teal:'#1abc9c', amber:'#E6C229', blue:'#2e86de', purple:'#9b59b6',
-    coral:'#FF6B6B', olive:'#8bbf6a', brown:'#5C4033'
-  };
-
-  // Line chart (wasteKg + energyKwh)
-  const lineCtx = document.getElementById('lineChart');
-  const lineChart = new Chart(lineCtx, {
-    type: 'line',
-    data: {
-      labels: sample.days,
-      datasets: [
-        { label:'Organic (kg)', data: sample.wasteKg, borderColor: palette.green, backgroundColor: 'rgba(0,168,107,0.08)', tension:0.3, yAxisID:'y1', pointRadius:3 },
-        { label:'E-waste (kg)', data: sample.energyKwh, borderColor: palette.blue, backgroundColor:'rgba(46,134,222,0.08)', tension:0.3, yAxisID:'y2', pointRadius:3 }
-      ]
-    },
-    options: {
-      responsive:true,
-      interaction:{mode:'index',intersect:false},
-      scales: {
-        x: { grid:{display:false} },
-        y1: { type:'linear', position:'left', title:{display:true,text:'kg'}, grid:{color:'rgba(10,40,20,0.03)'} },
-        y2: { type:'linear', position:'right', title:{display:true,text:'kWh'}, grid:{display:false} }
+    // Line Chart
+    lineChart = new Chart(document.getElementById('lineChart'), {
+      type: 'line',
+      data: {
+        labels: sample.days,
+        datasets: [
+          { label:'Organic (kg)', data: sample.wasteKg, borderColor: palette.primary, backgroundColor: 'rgba(5, 172, 117, 0.1)', tension:0.3, yAxisID:'y1', pointRadius:3, fill: true },
+          { label:'E-waste (kWh)', data: sample.energyKwh, borderColor: palette.blue, backgroundColor:'transparent', tension:0.3, yAxisID:'y2', pointRadius:3 }
+        ]
       },
-      plugins:{legend:{position:'top'}}
-    }
-  });
+      options: {
+        responsive:true,
+        maintainAspectRatio: false,
+        interaction:{mode:'index',intersect:false},
+        scales: {
+          x: { grid:{display:false} },
+          y1: { type:'linear', position:'left', title:{display:true,text:'kg'} },
+          y2: { type:'linear', position:'right', title:{display:true,text:'kWh'}, grid:{display:false} }
+        },
+        plugins:{legend:{position:'top'}}
+      }
+    });
 
-  // Pie chart (composition)
-  const pieCtx = document.getElementById('pieChart');
-  const pieChart = new Chart(pieCtx, {
-    type:'doughnut',
-    data:{
-      labels: Object.keys(sample.comp).map(k=>k.charAt(0).toUpperCase()+k.slice(1)),
-      datasets:[{
-        data: Object.values(sample.comp),
-        backgroundColor: [palette.green,palette.coral,palette.purple,palette.blue,palette.olive],
-        hoverOffset:8
-      }]
-    },
-    options:{responsive:true,plugins:{legend:{position:'bottom'}}}
-  });
+    // Pie Chart
+    pieChart = new Chart(document.getElementById('pieChart'), {
+      type:'doughnut',
+      data:{
+        labels: Object.keys(sample.comp).map(k=>k.charAt(0).toUpperCase()+k.slice(1)),
+        datasets:[{
+          data: Object.values(sample.comp),
+          backgroundColor: [palette.primary, palette.coral, palette.purple, palette.blue, palette.amber],
+          borderWidth: 0
+        }]
+      },
+      options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom', labels: {boxWidth: 12}}}}
+    });
 
-  // Scatter chart (kg vs kWh)
-  // create synthetic drop events by pairing arrays (for demo)
-  const scatterData = sample.wasteKg.map((kg, idx) => ({x:kg, y: sample.energyKwh[idx], r: Math.max(3, Math.round(kg/2))}));
-  const scatterCtx = document.getElementById('scatter');
-  const scatter = new Chart(scatterCtx, {
-    type:'bubble',
-    data:{datasets:[{label:'Drop events',data:scatterData,backgroundColor:'rgba(26,188,156,0.8)'}]},
-    options:{
-      plugins:{legend:{display:false}},
-      scales:{x:{title:{display:true,text:'Weight (kg)'}}, y:{title:{display:true,text:'Energy (kWh)'}}}
-    }
-  });
+    // Scatter Chart
+    const scatterData = sample.wasteKg.map((kg, idx) => ({x:kg, y: sample.energyKwh[idx], r: Math.max(4, Math.round(kg/2))}));
+    scatter = new Chart(document.getElementById('scatter'), {
+      type:'bubble',
+      data:{datasets:[{label:'Drop events',data:scatterData,backgroundColor:'rgba(46,134,222,0.6)'}]},
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{x:{title:{display:true,text:'Weight (kg)'}}, y:{title:{display:true,text:'Energy (kWh)'}}}
+      }
+    });
 
-  // Bar chart (tokens issued)
-  const barCtx = document.getElementById('barChart');
-  const barChart = new Chart(barCtx, {
-    type:'bar',
-    data:{
-      labels: sample.days,
-      datasets:[{
-        label:'EcoTokens',
-        data: sample.tokensIssued,
-        backgroundColor: sample.tokensIssued.map(v => v>70 ? palette.green : palette.amber),
-        borderRadius:6
-      }]
-    },
-    options:{plugins:{legend:{display:false}},scales:{x:{display:false}}}
-  });
+    // Bar Chart
+    barChart = new Chart(document.getElementById('barChart'), {
+      type:'bar',
+      data:{
+        labels: sample.days,
+        datasets:[{
+          label:'EcoTokens',
+          data: sample.tokensIssued,
+          backgroundColor: sample.tokensIssued.map(v => v>70 ? palette.primary : palette.amber),
+          borderRadius: 4
+        }]
+      },
+      options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},scales:{x:{display:false}}}
+    });
 
-  // Stacked chart (waste by region over weeks - synthetic)
-  const stackedCtx = document.getElementById('stacked');
-  const weeks = ['W1','W2','W3','W4'];
-  const stacked = new Chart(stackedCtx,{
-    type:'bar',
-    data:{
-      labels: weeks,
-      datasets: [
-        {label:'Eastlands', data:[240,260,220,280], backgroundColor:palette.green},
-        {label:'CBD', data:[180,150,210,170], backgroundColor:palette.blue},
-        {label:'Westlands', data:[130,160,140,150], backgroundColor:palette.purple},
-        {label:'Karen', data:[90,80,120,100], backgroundColor:palette.olive}
-      ]
-    },
-    options:{scales:{x:{stacked:true}, y:{stacked:true}}, plugins:{legend:{position:'bottom'}}}
-  });
+    // Stacked Bar
+    const weeks = ['W1','W2','W3','W4'];
+    stacked = new Chart(document.getElementById('stacked'),{
+      type:'bar',
+      data:{
+        labels: weeks,
+        datasets: [
+          {label:'Eastlands', data:[240,260,220,280], backgroundColor:palette.primary},
+          {label:'CBD', data:[180,150,210,170], backgroundColor:palette.blue},
+          {label:'Westlands', data:[130,160,140,150], backgroundColor:palette.purple},
+          {label:'Karen', data:[90,80,120,100], backgroundColor:palette.amber}
+        ]
+      },
+      options:{responsive:true, maintainAspectRatio:false, scales:{x:{stacked:true}, y:{stacked:true}}, plugins:{legend:{position:'bottom', labels: {boxWidth: 12}}}}
+    });
 
-  // Radar chart (user metrics)
-  const radarCtx = document.getElementById('radar');
-  const radar = new Chart(radarCtx,{
-    type:'radar',
-    data:{
-      labels:['Consistency','Variety','Impact','Redeeming','Engagement'],
-      datasets:[{
-        label:'Your Profile',
-        data:[80,60,75,50,85],
-        backgroundColor:'rgba(0,168,107,0.14)',
-        borderColor:palette.green,
-        pointBackgroundColor:palette.green
-      }]
-    },
-    options:{scales:{r:{beginAtZero:true,max:100}}}
-  });
-
-  /***********************
-   * Map (Leaflet)
-   ***********************/
-  const map = L.map('map', {zoomControl:false}).setView([-1.286389, 36.817223], 11);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'}).addTo(map);
-
-  // marker color by status
-  function getColor(status){
-    if(status==='Fully Occupied') return '#ff6b6b';
-    if(status==='Empty') return '#00a86b';
-    if(status==='Pre-Occupied') return '#ffb84d';
-    return '#999';
+    // Radar Chart
+    radar = new Chart(document.getElementById('radar'),{
+      type:'radar',
+      data:{
+        labels:['Consistency','Variety','Impact','Redeeming','Engagement'],
+        datasets:[{
+          label:'Your Profile',
+          data:[80,60,75,50,85],
+          backgroundColor:'rgba(5, 172, 117, 0.2)',
+          borderColor:palette.primary,
+          pointBackgroundColor:palette.primary
+        }]
+      },
+      options:{responsive:true, maintainAspectRatio:false, scales:{r:{beginAtZero:true,max:100, angleLines:{color:gridColor}, grid:{color:gridColor}}}}
+    });
   }
 
-  claimLocations.forEach(loc=>{
-    const circle = L.circleMarker([loc.lat, loc.lng], {radius:8, fillColor:getColor(loc.status), color:'#fff', weight:1, fillOpacity:0.9}).addTo(map);
-    circle.bindPopup(`<strong>${loc.neighbourhood}</strong><div class="small">${loc.type}</div><div class="small">Status: ${loc.status}</div><div class="small">Weight: ${loc.weight}</div>`);
+  function initMap() {
+    const map = L.map('map', {zoomControl:true}).setView([-1.286389, 36.817223], 11);
+    
+    // Check if dark mode is active to load appropriate tiles
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const tileUrl = isDark ? 
+      'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png' : 
+      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      
+    L.tileLayer(tileUrl, {maxZoom:19}).addTo(map);
+
+    function getColor(status){
+      if(status==='Fully Occupied') return '#ef4444';
+      if(status==='Empty') return '#10b981';
+      if(status==='Pre-Occupied') return '#f59e0b';
+      return '#94a3b8';
+    }
+
+    claimLocations.forEach(loc=>{
+      const circle = L.circleMarker([loc.lat, loc.lng], {
+        radius: 8, 
+        fillColor: getColor(loc.status), 
+        color: '#fff', 
+        weight: 1, 
+        fillOpacity: 0.9
+      }).addTo(map);
+      
+      circle.bindPopup(`
+        <div style="font-family: Inter, sans-serif;">
+          <strong>${loc.neighbourhood}</strong>
+          <div style="color: #64748b; font-size: 0.85rem;">${loc.type}</div>
+          <div style="margin-top: 0.25rem;">Status: <span style="font-weight: 600; color: ${getColor(loc.status)}">${loc.status}</span></div>
+          <div>Weight: ${loc.weight} kg</div>
+        </div>
+      `);
+    });
+  }
+
+  // Search Filter
+  document.getElementById('q').addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase();
+    const rows = document.getElementById('topTable').querySelectorAll('tr');
+    rows.forEach(r => {
+      r.style.display = (q === '' || r.textContent.toLowerCase().includes(q)) ? '' : 'none';
+    });
   });
 
-  /***********************
-   * Interactions
-   ***********************/
-  // Export CSV of sample daily series
-  function exportCSV(){
+  // Export CSV
+  function exportCSV() {
     const rows = [['date,wasteKg,energyKwh,tokens']];
     for(let i=0;i<sample.days.length;i++){
       rows.push(`${sample.days[i]},${sample.wasteKg[i]},${sample.energyKwh[i]},${sample.tokensIssued[i]}`);
     }
-    const csv = rows.join('\\n');
+    const csv = rows.join('\n');
     const blob = new Blob([csv],{type:'text/csv'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -733,56 +615,9 @@
     URL.revokeObjectURL(url);
   }
 
-  // Download charts as PNGs (zip-like zip omitted, download combined canvas)
-  function downloadPNG(){
-    // create combined canvas
-    const canvases = [lineCtx, pieCtx, scatterCtx];
-    const w = 1200;
-    const h = 800;
-    const combined = document.createElement('canvas');
-    combined.width = w; combined.height = h;
-    const ctx = combined.getContext('2d');
-    ctx.fillStyle = '#fff'; ctx.fillRect(0,0,w,h);
-    let x=0,y=0;
-    canvases.forEach((c,i)=>{
-      const tmp = document.createElement('canvas');
-      tmp.width = c.width; tmp.height = c.height;
-      tmp.getContext('2d').drawImage(c,0,0);
-      ctx.drawImage(c, x, y, w, Math.round(h/3));
-      y += Math.round(h/3);
-    });
-    const url = combined.toDataURL('image/png');
-    const a = document.createElement('a'); a.href=url; a.download='ecoverse-charts.png'; a.click();
+  // Download Charts
+  function downloadPNG() {
+    alert("In a real environment, this would stitch canvases and trigger download. Ensure charts are fully rendered.");
   }
-
-  // simple timeframe filter (for demo, just toggles dataset)
-  function setRange(range){
-    // in real app, request data for range; here simulate by scaling values
-    const mul = (range==='7'?0.5: range==='30'?1.0: range==='90'?1.5: 2.0);
-    const newWaste = sample.wasteKg.map(v=>Math.round(v * mul));
-    const newEnergy = sample.energyKwh.map(v=>Math.round(v * mul));
-    const newTokens = sample.tokensIssued.map(v=>Math.round(v * mul));
-    lineChart.data.datasets[0].data = newWaste;
-    lineChart.data.datasets[1].data = newEnergy;
-    barChart.data.datasets[0].data = newTokens;
-    pieChart.data.datasets[0].data = [Math.round(sample.comp.organic * mul), sample.comp.plastic, sample.comp.metal, sample.comp.glass, sample.comp.other];
-    lineChart.update(); barChart.update(); pieChart.update();
-    
-    // update summary
-    document.getElementById('totalWaste').textContent = newWaste.reduce((a,b)=>a+b,0) + ' kg';
-    document.getElementById('energyGen').textContent = newEnergy.reduce((a,b)=>a+b,0) + ' kWh';
-    document.getElementById('credits').textContent = Math.round(newTokens.reduce((a,b)=>a+b,0) / 10);
-  }
-
-  // minimal search (filter hubs)
-  document.getElementById('q').addEventListener('input', (e)=>{
-    const q = e.target.value.toLowerCase();
-    const rows = topTable.querySelectorAll('tr');
-    rows.forEach(r=>{
-      r.style.display = (q === '' || r.textContent.toLowerCase().includes(q)) ? '' : 'none';
-    });
-  });
-
-  </script>
-
-</html>
+</script>
+{% endblock %}

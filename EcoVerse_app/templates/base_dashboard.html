@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body_content %}
+<div class="app-container">
+  {% include 'sidebar.html' %}
+  
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <div class="main-content">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button id="menuToggle" class="menu-toggle" aria-label="Toggle Menu">
+          <i class="fas fa-bars"></i>
+        </button>
+        <div>
+          <h1 class="page-title">{% block page_title %}Dashboard{% endblock %}</h1>
+          <p class="page-subtitle muted">{% block page_subtitle %}{% endblock %}</p>
+        </div>
+      </div>
+      
+      <div class="topbar-actions">
+        {% block topbar_actions %}{% endblock %}
+        <button class="btn-icon theme-toggle-btn" aria-label="Toggle theme">
+          <i class="fa-solid fa-moon hide-dark"></i>
+          <i class="fa-solid fa-sun hide-light" style="display:none;"></i>
+        </button>
+        <div class="user-avatar" style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600;">
+          {{ user.username|default:"EV"|make_list|first|upper }}
+        </div>
+      </div>
+    </div>
+
+    <main class="page-content">
+      <div class="fade-in">
+        {% block content %}
+        {% endblock %}
+      </div>
+    </main>
+  </div>
+</div>
+
+{% include 'chatbox.html' %}
+
+<style>
+  [data-theme="dark"] .hide-dark { display: none; }
+  [data-theme="dark"] .hide-light { display: inline-block !important; }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+
+    if (menuToggle && sidebar && overlay) {
+      function toggleMenu() {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('open');
+      }
+
+      menuToggle.addEventListener('click', toggleMenu);
+      overlay.addEventListener('click', toggleMenu);
+    }
+  });
+</script>
+{% endblock %}

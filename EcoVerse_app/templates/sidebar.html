@@ -1,226 +1,37 @@
-<style>
-  /* :root {
-    --primary: #056D5F;
-    --secondary: #0B2545;
-    --accent: #FFD166;
-    --bg: #F6FAF8;
-    --card: #FFFFFF;
-    --text: #0B2545;
-    --success: #10b981;
-    --error: #ef4444;
-    --warning: #f59e0b;
-} */
-
-
-  /* Sidebar */
-  .sidebar {
-    width: 260px;
-    background: #ffffff;
-    border-right: 1px solid #e5e7eb;
-    padding: 1.5rem;
-    position: fixed;
-    height: inherit;
-    overflow-y: auto;
-    position: sticky;
-  }
-
-  .sidebar-logo {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #e5e7eb;
-  }
-
-  .sidebar-logo i {
-    color: var(--primary);
-    font-size: 1.75rem;
-  }
-
-  .sidebar-logo h1 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--primary);
-  }
-
-  .nav-menu {
-    list-style: none;
-  }
-
-  .nav-item {
-    margin-bottom: 0.5rem;
-  }
-
-  .nav-link {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    color: var(--text);
-    text-decoration: none;
-    border-radius: 8px;
-    transition: all 0.2s;
-  }
-
-
-
-  .nav-link i {
-    width: 20px;
-    text-align: center;
-  }
-
-  nav-link:active {
-    background-color: #056D5F;
-    color: #fff;
-  }
-
-
-  /* =========================
-   Mobile Responsiveness ≤1024px (tablets)
-   ========================= */
-  @media (max-width: 1024px) {
-    .sidebar {
-      width: 200px;
-      /* slightly smaller for tablets */
-      padding: 1rem;
-    }
-
-    .sidebar-logo h1 {
-      font-size: 1.25rem;
-    }
-
-    .nav-link {
-      padding: 0.6rem 0.8rem;
-      gap: 0.5rem;
-    }
-  }
-
-  /* =========================
-   Mobile Responsiveness ≤768px (phones)
-   ========================= */
-  @media (max-width: 768px) {
-
-    /* Sidebar becomes a top navigation bar */
-    .sidebar {
-      width: 100%;
-      height: auto;
-      position: relative;
-      border-right: none;
-      border-bottom: 1px solid #e5e7eb;
-      display: flex;
-      overflow-x: auto;
-      padding: 0.5rem 1rem;
-      gap: 0.5rem;
-    }
-
-    .sidebar-logo {
-      margin-bottom: 0;
-      border-bottom: none;
-      flex: 0 0 auto;
-    }
-
-    .nav-menu {
-      display: flex;
-      flex-direction: row;
-      gap: 0.5rem;
-    }
-
-    .nav-item {
-      margin-bottom: 0;
-    }
-
-    .nav-link {
-      padding: 0.5rem 0.75rem;
-      white-space: nowrap;
-    }
-
-    .nav-link i {
-      width: auto;
-    }
-  }
-
-  /* =========================
-   Extra Small Phones ≤480px
-   ========================= */
-  @media (max-width: 480px) {
-    .sidebar {
-      padding: 0.5rem;
-    }
-
-    .sidebar-logo h1 {
-      font-size: 1rem;
-    }
-
-    .nav-link {
-      padding: 0.4rem 0.6rem;
-      font-size: 0.85rem;
-    }
-
-    .nav-link i {
-      font-size: 1rem;
-    }
-  }
-</style>
-
-
-
 <!-- Sidebar Navigation -->
-<aside class="sidebar">
-  <div class="sidebar-logo">
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
     <i class="fas fa-leaf"></i>
-    <h1>EcoVerse</h1>
+    <span>EcoVerse</span>
   </div>
-  <nav>
-    <ul class="nav-menu">
-      <li class="nav-item">
-        <a href="/dashboard" class="nav-link active">
-          <i class="fas fa-home"></i>
-          <span>Dashboard</span>
-        </a>
-      </li>
-
-      <li class="nav-item">
-        <a href="/rewards" class="nav-link">
-          <i class="fas fa-gift"></i>
-          <span>Eco Tokens</span>
-        </a>
-      </li>
-
-      <li class="nav-item">
-        <a href="/analytics" class="nav-link">
-          <i class="fas fa-magnifying-glass-chart"></i>
-          <span>Analytics</span>
-        </a>
-      </li>
-
-      <li class="nav-item">
-        <a href="/nearby" class="nav-link">
-          <i class="fas fa-location"></i>
-          <span>Nearby</span>
-        </a>
-      </li>
-
-      <li class="nav-item">
-        <a href="/community" class="nav-link">
-          <i class="fas fa-users"></i>
-          <span>Community</span>
-        </a>
-      </li>
-
-      <li class="nav-item">
-        <a href="/ai-assistant" class="nav-link">
-          <i class="fas fa-robot"></i>
-          <span>AI Assistant</span>
-        </a>
-      </li>
-
-      <li class="nav-item">
-        <a href="/settings" class="nav-link">
-          <i class="fas fa-user-cog"></i>
-          <span>Settings</span>
-        </a>
-      </li>
-    </ul>
+  <nav class="sidebar-nav">
+    <a href="{% url 'dashboard' %}" class="nav-item {% if request.path == '/dashboard' or request.path == '/dashboard/' %}active{% endif %}">
+      <i class="fas fa-home"></i>
+      <span>Dashboard</span>
+    </a>
+    <a href="{% url 'reward' %}" class="nav-item {% if request.path == '/rewards' or request.path == '/rewards/' %}active{% endif %}">
+      <i class="fas fa-gift"></i>
+      <span>Eco Tokens</span>
+    </a>
+    <a href="{% url 'analytics' %}" class="nav-item {% if request.path == '/analytics' or request.path == '/analytics/' %}active{% endif %}">
+      <i class="fas fa-chart-pie"></i>
+      <span>Analytics</span>
+    </a>
+    <a href="{% url 'nearby' %}" class="nav-item {% if request.path == '/nearby' or request.path == '/nearby/' %}active{% endif %}">
+      <i class="fas fa-map-marker-alt"></i>
+      <span>Nearby</span>
+    </a>
+    <a href="{% url 'community' %}" class="nav-item {% if request.path == '/community' or request.path == '/community/' %}active{% endif %}">
+      <i class="fas fa-users"></i>
+      <span>Community</span>
+    </a>
+    <a href="{% url 'ai_assistant' %}" class="nav-item {% if request.path == '/ai-assistant' or request.path == '/ai-assistant/' %}active{% endif %}">
+      <i class="fas fa-robot"></i>
+      <span>AI Assistant</span>
+    </a>
+    <a href="{% url 'settings' %}" class="nav-item {% if request.path == '/settings' or request.path == '/settings/' %}active{% endif %}">
+      <i class="fas fa-cog"></i>
+      <span>Settings</span>
+    </a>
   </nav>
 </aside>
