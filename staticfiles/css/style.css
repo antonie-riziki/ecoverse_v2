@@ -482,10 +482,17 @@ tbody tr:hover {
    ========================================= */
 
 @media (max-width: 1024px) {
+  :root {
+    --sidebar-width: 280px;
+  }
+
   .sidebar {
     position: fixed;
+    top: 0;
+    left: 0;
     height: 100%;
     transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
   .sidebar.open {
@@ -493,7 +500,9 @@ tbody tr:hover {
   }
   
   .menu-toggle {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .sidebar-overlay.open {
@@ -509,6 +518,7 @@ tbody tr:hover {
   
   .topbar {
     padding: 0 1rem;
+    height: 60px;
   }
   
   .card {
@@ -517,6 +527,7 @@ tbody tr:hover {
   
   .grid-2, .grid-3, .grid-4 {
     grid-template-columns: 1fr;
+    gap: 1rem;
   }
   
   .container {
@@ -525,5 +536,55 @@ tbody tr:hover {
   
   .hide-mobile {
     display: none !important;
+  }
+
+  .page-title {
+    font-size: 1.1rem;
+  }
+
+  .btn {
+    padding: 0.6rem 1.25rem;
+    font-size: 0.9rem;
+  }
+
+  /* Landing Page Specific Responsiveness */
+  .hero-grid {
+    text-align: center;
+    gap: 2rem;
+  }
+
+  .headline {
+    font-size: 2rem;
+  }
+
+  .hero-sub {
+    font-size: 1rem;
+  }
+
+  .hero-actions {
+    justify-content: center;
+  }
+
+  .nav-links .btn-outline {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-container {
+    padding: 1.5rem 1.25rem;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+  }
+
+  .auth-logo {
+    width: 50px;
+    height: 50px;
+    font-size: 1.25rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
   }
 }

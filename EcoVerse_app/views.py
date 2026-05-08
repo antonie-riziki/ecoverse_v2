@@ -4,10 +4,12 @@ from django.shortcuts import render, redirect
 # import google.generativeai as genai # deprecated version
 from google import genai
 from google.genai import types
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.models import User
+from .models import Profile
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from dotenv import load_dotenv
@@ -29,13 +31,21 @@ sys.path.insert(1, "./EcoVerse_app")
 
 
 # genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
-client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+if GOOGLE_API_KEY:
+    client = genai.Client(api_key=GOOGLE_API_KEY)
+else:
+    client = None
 
-africastalking.initialize(username="EMID", api_key=os.getenv("AT_API_KEY"))
-
-
-sms = africastalking.SMS
-airtime = africastalking.Airtime
+AT_USERNAME = os.getenv("AT_USERNAME", "EMID")
+AT_API_KEY = os.getenv("AT_API_KEY")
+if AT_API_KEY:
+    africastalking.initialize(username=AT_USERNAME, api_key=AT_API_KEY)
+    sms = africastalking.SMS
+    airtime = africastalking.Airtime
+else:
+    sms = None
+    airtime = None
 
 """
 
@@ -78,6 +88,8 @@ def get_opik_client(base_client):
 
 
 def opik_gemini_agent(prompt: str):
+    if client is None:
+        return "AI Client not initialized."
     safe_client = get_opik_client(client)
 
     response = safe_client.models.generate_content(
@@ -88,6 +100,8 @@ def opik_gemini_agent(prompt: str):
 
 
 def get_gemini_response(prompt):
+    if client is None:
+        return "AI Client not initialized."
 
     response = client.models.generate_content(
         model="gemini-2.0-flash",
@@ -169,6 +183,10 @@ def get_gemini_response(prompt):
 
 
 def registration_message(phone_number):
+    if sms is None or airtime is None:
+        print("AfricasTalking not initialized.")
+        return
+
     amount = "10"
     currency_code = "KES"
 
@@ -234,7 +252,8 @@ def registration(request):
             last_name=last_name,
         )
 
-        user.save()
+        # Create profile
+        Profile.objects.create(user=user, phone_number=phone)
 
         registration_message(phone)
         messages.success(request, "Account created successfully")
@@ -253,41 +272,56 @@ def signin(request):
         if user is not None:
             login(request, user)
             # login_message(user.phone_number)
-            return redirect("/dashboard")
+            messages.success(request, f"Welcome back, {user.first_name or user.username}!")
+            return redirect("dashboard")
         else:
             messages.error(request, "Invalid email or password")
 
     return render(request, "signin.html")
 
 
+def signout(request):
+    logout(request)
+    messages.success(request, "You have been logged out.")
+    return redirect("home")
+
+
+@login_required
 def dashboard(request):
     return render(request, "dashboard.html")
 
 
+@login_required
 def settings(request):
     return render(request, "settings.html")
 
 
+@login_required
 def rewards(request):
     return render(request, "rewards.html")
 
 
+@login_required
 def impact(request):
     return render(request, "impact.html")
 
 
+@login_required
 def analytics(request):
     return render(request, "analytics.html")
 
 
+@login_required
 def nearby(request):
     return render(request, "nearby.html")
 
 
+@login_required
 def community(request):
     return render(request, "community.html")
 
 
+@login_required
 def ai_assistant(request):
     return render(request, "ai_assist.html")
 

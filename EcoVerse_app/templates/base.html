@@ -17,6 +17,27 @@
   {% block extra_css %}{% endblock %}
 </head>
 <body>
+  {% if messages %}
+    <div class="messages-container" style="position: fixed; top: 1rem; right: 1rem; z-index: 1000; display: flex; flex-direction: column; gap: 0.5rem; max-width: 320px;">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}" style="padding: 1rem; border-radius: var(--radius-md); background: var(--card-bg); border: 1px solid var(--border-color); box-shadow: var(--shadow-md); display: flex; align-items: center; justify-content: space-between; gap: 1rem; animation: slideIn 0.3s ease forwards;">
+          <span style="font-size: 0.9rem; font-weight: 500;">{{ message }}</span>
+          <button onclick="this.parentElement.remove()" style="background: none; border: none; cursor: pointer; color: var(--text-muted);"><i class="fas fa-times"></i></button>
+        </div>
+      {% endfor %}
+    </div>
+    <style>
+      @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+      .alert.success { border-left: 4px solid var(--success); }
+      .alert.error { border-left: 4px solid var(--danger); }
+      .alert.warning { border-left: 4px solid var(--warning); }
+      .alert.info { border-left: 4px solid var(--primary); }
+    </style>
+  {% endif %}
+
   {% block body_content %}
   {% endblock %}
 
