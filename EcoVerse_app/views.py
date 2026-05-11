@@ -14,6 +14,7 @@ from dotenv import load_dotenv
 import os
 import sys
 import json
+import requests
 
 
 # from opik import configure
@@ -33,6 +34,8 @@ client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
 
 africastalking.initialize(username="EMID", api_key=os.getenv("AT_API_KEY"))
 
+response = requests.get('https://public-api-v2.bags.fm/api/v1/endpoint', 
+  headers={'x-api-key': os.getenv("BAGS_API_KEY")})
 
 sms = africastalking.SMS
 airtime = africastalking.Airtime

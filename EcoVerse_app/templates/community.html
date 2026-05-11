@@ -116,20 +116,6 @@
     margin-left: 0.5rem;
   }
 
-  .market-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-    margin-top: 1rem;
-  }
-
-  .market-item {
-    text-align: center;
-    padding: 1.5rem;
-    background: var(--bg-secondary);
-    border-radius: var(--radius-md);
-    border: 1px solid var(--border-color);
-  }
 
   /* Detail Pane */
   .detail-pane {
@@ -290,41 +276,6 @@
 
   <div id="communityList" class="community-list">
     <!-- Populated by JS -->
-  </div>
-</div>
-
-<!-- Marketplace Section -->
-<div class="card mb-4 fade-in" style="animation-delay: 0.4s" id="marketplace-section">
-  <div class="card-header">
-    <h3 class="card-title">Carbon Credit Marketplace</h3>
-  </div>
-  <div class="market-grid">
-    <div class="market-item">
-      <h4 class="mb-1">Buy Verified Credits</h4>
-      <div style="font-weight: 800; color: var(--primary); font-size: 1.25rem;">40 KES / credit</div>
-      <p class="text-sm muted mt-2 mb-3">Sourced from reforestation & compost projects</p>
-      <div class="d-flex flex-column gap-2">
-        <input id="buyAmount" type="number" min="1" placeholder="Credits to buy" class="form-control" />
-        <button class="btn btn-primary w-100" id="buyBtn">Buy Credits</button>
-      </div>
-    </div>
-    
-    <div class="market-item">
-      <h4 class="mb-1">Sell Credits</h4>
-      <div style="font-weight: 800; color: var(--warning); font-size: 1.25rem;">Listing marketplace</div>
-      <p class="text-sm muted mt-2 mb-3">List credits from your community projects</p>
-      <div class="d-flex flex-column gap-2">
-        <input id="sellAmount" type="number" min="1" placeholder="Credits to sell" class="form-control" />
-        <button class="btn btn-outline w-100" id="sellBtn">List for Sale</button>
-      </div>
-    </div>
-    
-    <div class="market-item">
-      <h4 class="mb-1">Your Orders</h4>
-      <div id="orders" class="text-sm mt-3" style="text-align: left; background: var(--bg-color); padding: 1rem; border-radius: var(--radius-sm); border: 1px dashed var(--border-color); min-height: 100px;">
-        No orders yet
-      </div>
-    </div>
   </div>
 </div>
 
@@ -698,51 +649,6 @@
   }
 
   /**********************
-   * Marketplace actions
-   **********************/
-  let orders = [];
-  function buyCredits(){
-    const n = Number(document.getElementById('buyAmount').value || 0);
-    if(!n || n <= 0){ alert('Enter a positive credit amount'); return; }
-    const cost = n * 40; 
-    if(!confirm(`Buy ${n} credits for KES ${cost}?`)) return;
-    user.tokens += n;
-    orders.push({id:'o'+Date.now(), type:'buy', amount:n, cost:cost, when: new Date().toISOString()});
-    persist();
-    renderOrders();
-    document.getElementById('userTokens').textContent = user.tokens + ' EcoTokens';
-    document.getElementById('buyAmount').value = '';
-    alert('Purchase successful — tokens added to your balance.');
-  }
-  
-  function sellCredits(){
-    const n = Number(document.getElementById('sellAmount').value || 0);
-    if(!n || n <= 0){ alert('Enter a positive credit amount'); return; }
-    if(user.tokens < n){ alert('Not enough tokens'); return; }
-    const price = n * 35; 
-    if(!confirm(`List ${n} credits for sale at KES ${price}?`)) return;
-    user.tokens -= n;
-    orders.push({id:'o'+Date.now(), type:'sell', amount:n, price:price, when: new Date().toISOString()});
-    persist();
-    renderOrders();
-    document.getElementById('userTokens').textContent = user.tokens + ' EcoTokens';
-    document.getElementById('sellAmount').value = '';
-    alert('Credits listed for sale (simulated).');
-  }
-
-  function renderOrders(){
-    const el = document.getElementById('orders');
-    if(orders.length===0){ el.innerHTML = '<span class="muted">No orders yet</span>'; return; }
-    el.innerHTML = orders.map(o=>`
-      <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem; border-bottom:1px solid var(--border-color); padding-bottom:0.5rem;">
-        <span class="${o.type === 'buy' ? 'text-primary' : 'text-warning'} font-weight-bold" style="text-transform:uppercase">${o.type}</span>
-        <span>${o.amount} credits</span>
-        <span class="muted">${o.cost ? o.cost : o.price} KES</span>
-      </div>
-    `).join('');
-  }
-
-  /**********************
    * Create community modal
    **********************/
   const overlay = document.getElementById('overlay');
@@ -818,13 +724,6 @@
     
     document.getElementById('sortBy').addEventListener('change', ()=> renderList(document.getElementById('sortBy').value, document.getElementById('region').value, document.getElementById('category').value, document.getElementById('search').value));
 
-    document.getElementById('buyBtn').addEventListener('click', buyCredits);
-    document.getElementById('sellBtn').addEventListener('click', sellCredits);
-    document.getElementById('openMarketplace').addEventListener('click', () => {
-      document.getElementById('marketplace-section').scrollIntoView({behavior: 'smooth'});
-    });
-    document.getElementById('openEvents').addEventListener('click', ()=> alert('Events panel is a planned feature!'));
-
     // Close modal if clicked outside
     window.addEventListener('click', (e) => {
       if (e.target === overlay) closeModal();
@@ -834,7 +733,6 @@
     restoreUser();
     renderMarkers();
     renderList();
-    renderOrders();
     
     // set user tokens display
     document.getElementById('userTokens').textContent = user.tokens + ' EcoTokens';
