@@ -7,7 +7,7 @@ import path from "path";
 // Load environment variables from the root .env file
 dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
-export const launchToken = async () => {
+export const launchEcoVerseToken = async (data?: any) => {
   const apiKey = process.env.BAGS_API_KEY;
   const solanaAddress = process.env.SOLANA_ADDRESS;
 
@@ -28,10 +28,14 @@ export const launchToken = async () => {
   // Future implementation: Add token launch logic here
   // const result = await sdk.launchpad.launch({ ... });
   
-  return sdk;
+  // return sdk;
+  return {
+    message: "SDK initialized successfully (Token launch logic pending implementation)",
+    solanaAddress: solanaAddress,
+  };
 };
 
 // If running directly
 if (require.main === module) {
-  launchToken().catch(console.error);
+  launchEcoVerseToken().catch(console.error);
 }
