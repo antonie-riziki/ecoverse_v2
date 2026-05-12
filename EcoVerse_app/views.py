@@ -308,3 +308,56 @@ def chatbot_response(request):
             return JsonResponse({"response": opik_response})
         else:
             return JsonResponse({"response": "Sorry, I didn't catch that."}, status=400)
+
+
+
+@csrf_exempt
+def launch_ecoverse_token(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST required"}, status=405)
+
+    existing = EcoToken.objects.filter(is_launched=True).first()
+    if existing:
+        return JsonResponse({
+            "message": "EcoVerse token already launched",
+            "token_mint": existing.token_mint,
+            "bags_url": existing.bags_url,
+        })
+
+    payload = {
+        "name": "EcoVerse",
+        "symbol": "ECO",
+        "description": "Organic waste recycling reward token for EcoVerse.",
+        "imageUrl": "https://your-domain.com/static/ecoverse-logo.png",
+        "initialBuyLamports": 10000000,
+    }
+
+    response = requests.post(
+        "http://localhost:8787/launch-token",
+        json=payload,
+        timeout=60,
+    )
+
+    data = response.json()
+
+    if not data.get("success"):
+        return JsonResponse(data, status=500)
+
+    result = data["result"]
+
+    token = EcoToken.objects.create(
+        name=payload["name"],
+        symbol=payload["symbol"],
+        token_mint=result.get("tokenMint"),
+        metadata_url=result.get("metadataUrl"),
+        bags_url=f"https://bags.fm/{result.get('tokenMint')}",
+        launch_signature=result.get("signature"),
+        is_launched=True,
+    )
+
+    return JsonResponse({
+        "message": "EcoVerse token launched successfully",
+        "token_mint": token.token_mint,
+        "bags_url": token.bags_url,
+        "signature": token.launch_signature,
+    })
