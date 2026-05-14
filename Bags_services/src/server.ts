@@ -7,6 +7,11 @@ dotenv.config({ path: "../.env" });
 const app = express();
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  res.json({ message: "Bags service is running", status: "OK" });
+});
+
+
 app.post("/launch-token", async (req, res) => {
   try {
     const result = await launchEcoVerseToken(req.body);

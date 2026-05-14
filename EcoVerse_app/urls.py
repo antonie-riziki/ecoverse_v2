@@ -17,6 +17,7 @@ urlpatterns = [
     path('ai-assistant', views.ai_assistant, name="ai_assistant"),
     path('chatbot-response/', views.chatbot_response, name='chatbot_response'),
 
-    path("bags/launch-token/", views.launch_ecoverse_token, name="launch_ecoverse_token"),
+    path("api/bags/launch-token/", views.launch_ecoverse_token, name="launch_ecoverse_token"),
+    path("api/bags/health/", views.bags_health, name="bags_health"),
 
 ]

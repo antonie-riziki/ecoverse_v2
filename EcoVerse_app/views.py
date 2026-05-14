@@ -15,6 +15,7 @@ import os
 import sys
 import json
 import requests
+from .models import EcoToken
 
 
 # from opik import configure
@@ -361,3 +362,52 @@ def launch_ecoverse_token(request):
         "bags_url": token.bags_url,
         "signature": token.launch_signature,
     })
+
+
+
+
+
+def bags_health(request):
+    try:
+        response = requests.get("http://localhost:8787/", timeout=10)
+        return JsonResponse(response.json())
+    except Exception as e:
+        return JsonResponse({
+            "status": "ERROR",
+            "message": str(e)
+        }, status=500)
+
+
+@csrf_exempt
+def launch_ecoverse_token(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST required"}, status=405)
+
+    try:
+        response = requests.post(
+            "http://localhost:8787/launch-token",
+            json={},
+            timeout=60,
+        )
+
+        data = response.json()
+        result = data.get("result", {})
+
+        token, created = EcoToken.objects.get_or_create(
+            symbol="ECO",
+            defaults={
+                "name": "EcoVerse",
+                "status": result.get("status", "pending"),
+            }
+        )
+
+        token.status = result.get("status", "pending")
+        token.save()
+
+        return JsonResponse(data)
+
+    except Exception as e:
+        return JsonResponse({
+            "success": False,
+            "error": str(e)
+        }, status=500)

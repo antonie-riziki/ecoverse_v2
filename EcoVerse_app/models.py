@@ -11,4 +11,6 @@ class EcoToken(models.Model):
     bags_url = models.URLField(blank=True, null=True)
     launch_signature = models.CharField(max_length=200, blank=True, null=True)
     is_launched = models.BooleanField(default=False)
+    status = models.CharField(max_length=50, default="pending")
+
     created_at = models.DateTimeField(auto_now_add=True)
