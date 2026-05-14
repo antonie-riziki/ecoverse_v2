@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import { launchEcoVerseToken } from "./launchToken";
+import { sendEcoReward } from "./sendReward";
 
 dotenv.config({ path: "../.env" });
 
@@ -26,4 +27,21 @@ app.post("/launch-token", async (req, res) => {
 
 app.listen(8787, () => {
   console.log("Bags service running on http://localhost:8787");
+});
+
+
+
+
+
+
+app.post("/send-reward", async (req, res) => {
+  try {
+    const result = await sendEcoReward(req.body);
+    res.json({ success: true, result });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      error: error.message || "Reward transfer failed",
+    });
+  }
 });

@@ -15,7 +15,12 @@ import os
 import sys
 import json
 import requests
-from .models import EcoToken
+from decimal import Decimal
+from django.utils import timezone
+import uuid
+
+
+from .models import RecyclingSubmission, EcoToken
 
 
 # from opik import configure
@@ -411,3 +416,136 @@ def launch_ecoverse_token(request):
             "success": False,
             "error": str(e)
         }, status=500)
+
+
+
+TOKEN_PER_KG = Decimal("10")  # 1kg organic waste = 10 ECO
+
+
+def calculate_reward(waste_kg):
+    return Decimal(str(waste_kg)) * TOKEN_PER_KG
+
+
+
+@csrf_exempt
+def verify_recycling_submission(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST required"}, status=405)
+
+    try:
+        data = json.loads(request.body or "{}")
+
+        user_phone = data.get("user_phone")
+        user_wallet = data.get("user_wallet")
+        waste_kg = data.get("waste_kg")
+        center_name = data.get("center_name", "EcoVerse Collection Center")
+
+        if not user_phone:
+            return JsonResponse({"error": "user_phone is required"}, status=400)
+
+        if not waste_kg:
+            return JsonResponse({"error": "waste_kg is required"}, status=400)
+
+        reward_amount = calculate_reward(waste_kg)
+
+        submission = RecyclingSubmission.objects.create(
+            user_phone=user_phone,
+            user_wallet=user_wallet,
+            waste_kg=waste_kg,
+            reward_amount=reward_amount,
+            center_name=center_name,
+            status="reward_pending",
+            verification_code=f"ECO-{uuid.uuid4().hex[:10].upper()}",
+            verified_at=timezone.now(),
+        )
+
+        return JsonResponse({
+            "success": True,
+            "message": "Waste verified and reward queued",
+            "submission_id": submission.id,
+            "verification_code": submission.verification_code,
+            "user_phone": submission.user_phone,
+            "user_wallet": submission.user_wallet,
+            "waste_kg": str(submission.waste_kg),
+            "reward_amount": str(submission.reward_amount),
+            "status": submission.status,
+        })
+
+    except Exception as e:
+        return JsonResponse({
+            "success": False,
+            "error": str(e),
+        }, status=500)
+
+
+
+
+
+@csrf_exempt
+def send_recycling_reward(request, submission_id):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST required"}, status=405)
+
+    try:
+        submission = RecyclingSubmission.objects.get(id=submission_id)
+
+        if submission.status == "reward_sent":
+            return JsonResponse({
+                "success": True,
+                "message": "Reward already sent",
+                "signature": submission.reward_signature,
+            })
+
+        if not submission.user_wallet:
+            return JsonResponse({"error": "Submission has no user wallet"}, status=400)
+
+        token = EcoToken.objects.filter(symbol="ECO", status="READY_TO_LAUNCH").first()
+
+        if not token or not token.mint_address:
+            submission.status = "reward_pending"
+            submission.reward_error = "ECO token not launched yet"
+            submission.save()
+
+            return JsonResponse({
+                "success": False,
+                "status": "reward_pending",
+                "message": "ECO token is not launched yet. Reward remains queued.",
+            }, status=400)
+
+        response = requests.post(
+            "http://localhost:8787/send-reward",
+            json={
+                "recipientWallet": submission.user_wallet,
+                "amount": float(submission.reward_amount),
+                "mintAddress": token.mint_address,
+                "decimals": 6,
+            },
+            timeout=60,
+        )
+
+        data = response.json()
+
+        if not data.get("success"):
+            submission.reward_error = data.get("error", "Unknown reward transfer error")
+            submission.save()
+            return JsonResponse(data, status=500)
+
+        result = data["result"]
+
+        submission.status = "reward_sent"
+        submission.reward_signature = result.get("signature")
+        submission.reward_error = None
+        submission.save()
+
+        return JsonResponse({
+            "success": True,
+            "message": "Reward sent successfully",
+            "submission_id": submission.id,
+            "signature": submission.reward_signature,
+        })
+
+    except RecyclingSubmission.DoesNotExist:
+        return JsonResponse({"error": "Submission not found"}, status=404)
+
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)}, status=500)

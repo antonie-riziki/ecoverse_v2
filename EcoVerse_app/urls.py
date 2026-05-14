@@ -19,5 +19,12 @@ urlpatterns = [
 
     path("api/bags/launch-token/", views.launch_ecoverse_token, name="launch_ecoverse_token"),
     path("api/bags/health/", views.bags_health, name="bags_health"),
+    path("api/recycling/verify/", views.verify_recycling_submission, name="verify_recycling_submission"),
+    path("api/recycling/<int:submission_id>/send-reward/", views.send_recycling_reward, name="send_recycling_reward"),
 
+
+
+
+
+    
 ]
